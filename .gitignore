@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Output — PDFs gerados e previews de QA (renders PNG página a página,
+# gerados ad-hoc pra revisão visual, nunca artefato final). Nada aqui vai
+# pro git: distribuição é por GitHub Release (mesmo padrão do folheto-ifem,
+# ver CLAUDE.md).
+output/*.pdf
+output/_preview_*
+!output/.gitkeep
+
+# Fontes (binárias — usuário baixa local com tools/baixar_fontes.py)
+fonts/*.ttf
+fonts/*.otf
+!fonts/README.md
+
+# Harness Claude Code (local)
+.claude/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

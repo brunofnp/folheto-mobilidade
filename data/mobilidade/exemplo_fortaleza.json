@@ -1,0 +1,88 @@
+{
+  "_nota_proveniencia": "Exemplo para validar o pipeline, NÃO dado publicável. Todo valor abaixo foi transcrito por extenso do documento de briefing do projeto (Rascunho rel seg. viária.pdf) — nenhum número foi estimado, arredondado ou completado por fora dele. Campo que o próprio briefing deixou como placeholder (população, área, série histórica de internações) ficou null aqui também.",
+  "nome": "Fortaleza",
+  "uf": "CE",
+
+  "populacao": {"valor": null, "ano": null},
+  "area_km2": null,
+
+  "frota": {
+    "evolucao_pct": {
+      "2003_2010": {"total": 67.1, "automoveis": 49.2, "motocicletas": 150.0},
+      "2011_2020": {"total": 47.3, "automoveis": 35.4, "motocicletas": 72.9},
+      "2021_2025": {"total": 12.2, "automoveis": 2.5,  "motocicletas": 24.2},
+      "2003_2025": {"total": 210.4, "automoveis": 122.2, "motocicletas": 566.2}
+    },
+    "atual": {"total": 1320000, "automoveis": 633000, "motocicletas": 428000}
+  },
+
+  "mortalidade_2024": {
+    "total": {
+      "municipio": 8.2,
+      "rm": 6.9,       "rm_pos": 14,       "rm_total": 19,
+      "porte": 8.1,    "porte_pos": 4,     "porte_total": 15,
+      "estado": 16.3,  "estado_pos": 41,   "estado_total": 184,
+      "brasil": 17.4,  "brasil_pos": 1169, "brasil_total": 5570,
+      "capitais": 9.2, "capitais_pos": 5,  "capitais_total": 27
+    },
+    "motociclistas": {
+      "municipio": 3.9,
+      "rm": 3.2,       "rm_pos": 15,       "rm_total": 19,
+      "porte": 2.8,    "porte_pos": 9,     "porte_total": 15,
+      "estado": 9.4,   "estado_pos": 51,   "estado_total": 184,
+      "brasil": 7.3,   "brasil_pos": 2428, "brasil_total": 5570,
+      "capitais": 3.6, "capitais_pos": 11, "capitais_total": 27
+    },
+    "pedestres": {
+      "municipio": 2.7,
+      "rm": 2.4,       "rm_pos": 14,       "rm_total": 19,
+      "porte": 2.2,    "porte_pos": 6,     "porte_total": 15,
+      "estado": 2.6,   "estado_pos": 123,  "estado_total": 184,
+      "brasil": 2.6,   "brasil_pos": 4085, "brasil_total": 5570,
+      "capitais": 2.2, "capitais_pos": 14, "capitais_total": 27
+    },
+    "ciclistas": {
+      "municipio": 0.6,
+      "rm": 0.5,       "rm_pos": 15,       "rm_total": 19,
+      "porte": 0.3,    "porte_pos": 10,    "porte_total": 15,
+      "estado": 0.7,   "estado_pos": 145,  "estado_total": 184,
+      "brasil": 0.7,   "brasil_pos": 4773, "brasil_total": 5570,
+      "capitais": 0.4, "capitais_pos": 13, "capitais_total": 27
+    }
+  },
+
+  "mortes_serie_historica": {
+    "_nota": "O briefing só traz essa série como gráfico de linha, sem tabela de valores por extenso — transcrever da imagem seria estimar, não ler um dado. Deixado vazio de propósito; a página mostra o aviso de dado pendente.",
+    "anos": [],
+    "total": [],
+    "motociclistas": [],
+    "pedestres": [],
+    "ciclistas": []
+  },
+
+  "internacoes_2025": {
+    "total":          {"municipio": null, "porte": null, "estado": null, "brasil": null},
+    "motociclistas":  {"municipio": null, "porte": null, "estado": null, "brasil": null},
+    "pedestres":      {"municipio": null, "porte": null, "estado": null, "brasil": null},
+    "ciclistas":      {"municipio": null, "porte": null, "estado": null, "brasil": null}
+  },
+
+  "internacoes_serie_historica": {
+    "anos": [],
+    "total": [],
+    "gestao_atual": {"inicio": null, "fim": null}
+  },
+
+  "ranking_causas_morte": {
+    "fonte": "SMS, 2019",
+    "total_causas": 13,
+    "_nota_total_causas": "13 é o número de linhas visíveis na tabela do briefing (TABELA 01), não uma confirmação de que o ranking oficial da SMS tem exatamente 13 causas.",
+    "posicao_acidentes_transito": {"2016": 6, "2017": 9, "2018": 12, "2019": 9}
+  },
+
+  "leitos_uti_hipotetico": {
+    "nota": "Pergunta orientadora do projeto (item 8 do briefing): se não houvesse acidentes de trânsito, quantos leitos de UTI ficariam disponíveis para outras doenças? Cálculo pendente do dado de internação consolidado."
+  },
+
+  "url": "https://fnp.org.br/mobilidade"
+}
