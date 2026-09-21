@@ -1551,6 +1551,13 @@ def draw_lettermark_stripe(c, palavra: str, page_w: float, page_h: float,
     c.setStrokeAlpha(0.35)
     c.translate(cx, (y_min + page_h + largura) / 2)
     c.rotate(-90)
+    # scale(1,-1): sem isso, cada letra saía espelhada (o lado da faixa que
+    # cada glifo usa pra seus próprios traços internos é o mesmo eixo que
+    # rotate(-90) mapeia pra largura do stripe) — a sequência de cima pra
+    # baixo (eixo x, inalterado aqui) já estava correta, só a orientação
+    # de cada letra dentro da faixa precisava inverter. Reportado pelo
+    # usuário comparando com referência visual do padrão real do IFEM.
+    c.scale(1, -1)
     draw_alfabeto_modular_palavra(c, palavra[::-1], 0, -modulo, modulo,
                                   cores=(WHITE, WHITE, WHITE), traco=0.5)
     c.restoreState()
