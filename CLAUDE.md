@@ -25,9 +25,23 @@
 > toda página, faixa inferior clara com logo+ranking). Ver Decisão 5 (e
 > seus 6 adendos) e `DESIGN_SYSTEM.md` §5.9–§5.16. Back-office ganhou
 > botão de preview (PDF sempre atual, sem "Gerar Novo") e alternância
-> A4/A3; site estático (`docs/`) ganhou rodapé institucional real da FNP e
-> já está publicado via GitHub Pages em `brunofnp.github.io/folheto-
-> mobilidade`.
+> A4/A3; site estático (`docs/`) ganhou rodapé institucional real da FNP.
+>
+> Atualizado em 2026-09-21 (mesmo dia, mais tarde) — **site migrado pra
+> produção de verdade**: `dadosfnp/folheto-mobilidade` recebeu seu
+> primeiro `git push` (estava vazio desde a criação), a release oficial
+> dos PDFs e o GitHub Pages agora vivem lá
+> (`https://dadosfnp.github.io/folheto-mobilidade/`, não mais no domínio
+> pessoal). QR code/link dos PDFs atualizado pra esse endereço real. Ver
+> Decisão 5, sétimo adendo, item 7. Direção e posição do lettermark
+> "MOBILIDADE" no stripe ajustadas de novo a pedido do usuário (item 1–3
+> do sétimo adendo) — **item 3 (espelhamento esquerda↔direita) aplicado
+> mas não confirmado visualmente pelo usuário antes dele precisar sair da
+> sessão; pode precisar de mais uma rodada** se ainda estiver errado.
+> Regra nova e importante: **nunca adicionar o Claude como coautor em
+> commit, em projeto nenhum** (também salva em `~/.claude/CLAUDE.md`,
+> global) — os commits desta sessão que já tinham essa linha foram
+> reescritos e republicados.
 
 ---
 
@@ -514,6 +528,100 @@ ambos sem tocar em dado/componente de conteúdo:
    `tools/verificar_arte.py` seguem passando 5/5. Ver `DESIGN_SYSTEM.md`
    §5.14 e §5.16.
 
+**Sétimo adendo (2026-09-21, mesmo dia):** depois de publicar o site em
+produção, uma sequência de correções e um problema em aberto:
+
+1. **Direção de leitura do lettermark, invertida de novo.** O usuário
+   apontou (com uma seta desenhada sobre um screenshot do stripe) que
+   "MOBILIDADE" devia subir (primeira letra embaixo, perto do número de
+   página), não descer a partir do topo. `draw_lettermark_stripe` passou a
+   desenhar `palavra[::-1]` — a última letra desenhada fica no topo, a
+   primeira embaixo, então ler de baixo pra cima dá a palavra certa. A
+   rotação em si não muda.
+2. **Posição vertical na capa, reancorada.** Na capa, a palavra ficava
+   centralizada contra a ALTURA INTEIRA da página — sobrava muito stripe
+   vazio entre ela e a faixa branca de informação (apontado pelo usuário
+   com outra seta). `draw_lettermark_stripe` ganhou o parâmetro `y_min`
+   (padrão `0`, sem mudança pras páginas de conteúdo); a capa passa
+   `y_min=faixa_h`, centralizando a palavra só dentro da área do mosaico.
+3. **Espelhamento esquerda↔direita — tentativa de correção, resultado
+   incerto.** O usuário reportou (com uma foto de referência do padrão
+   real do IFEM) que cada letra parecia "o reflexo de um espelho". Perguntado
+   diretamente, o usuário confirmou que era isso mesmo (não a ordem/
+   sequência, que já estava certa) — cada glifo virado ao contrário dentro
+   da faixa. Aplicado `c.scale(1, -1)` logo após a rotação em
+   `draw_lettermark_stripe`, invertendo o eixo que cruza a largura do
+   stripe sem afetar o eixo de sequência (confirmado matematicamente e
+   visualmente comparando recortes antes/depois — as formas mudam de
+   lado). **Ressalva importante, descoberta só depois de aplicar o fix:**
+   ao investigar a fundo pra confirmar contra uma segunda pista do usuário
+   ("a curva do B aponta pra dentro/esquerda na referência"), percebi que
+   `_glifo_b` (e a distinção espinha/bojo de `_glifo_d`) são desenhados
+   com a assimetria ao longo do eixo de SEQUÊNCIA da palavra (mapeado pra
+   cima/baixo na página), não do eixo de LARGURA do stripe (mapeado
+   esquerda/direita) — ou seja, essas letras especificamente são
+   simétricas esquerda-direita por construção, e `scale(1,-1)` não muda a
+   aparência delas. Não deu tempo de confirmar visualmente com o usuário
+   se o resultado final bate 100% com a foto de referência antes dele
+   precisar sair (pediu pra eu resolver sozinho e commitar). **Se a
+   próxima sessão abrir e o usuário disser que o stripe ainda está
+   errado:** não presumir que é a mesma causa já corrigida aqui — reabrir
+   a investigação letra por letra (a técnica que funcionou foi calcular a
+   posição exata de uma letra específica com `largura_alfabeto_modular_palavra`
+   e marcar um retângulo vermelho no PDF via PyMuPDF `draw_rect`, não
+   comparar screenshots pequenos a olho).
+4. **Travessão (—) banido de qualquer texto de UI, não só do PDF.** Regra
+   que já existia só pra `tools/verificar_texto.py` (texto impresso)
+   passou a valer pra copy de página também — usuário apontou uma
+   ocorrência em `web/municipios/templates/municipios/lista.html`.
+   Trocado por vírgula/dois-pontos/`·` conforme o contexto, em
+   `docs/index.html` e nos templates do back-office também. Salvo em
+   memória (`feedback_sem_travessao`).
+5. **Ícones sociais do rodapé — causa raiz era especificidade de CSS, não
+   a cor em si.** Três tentativas sucessivas de mudar o valor de `color`
+   em `.site-footer-social-icon` não tinham efeito nenhum visível — a
+   causa real era `.site-footer-col a { color: inherit }` (seletor
+   classe+elemento) ter mais especificidade que `.site-footer-social-icon`
+   sozinho (seletor de 1 classe), então o `inherit` sempre vencia,
+   herdando a cor de texto padrão escura da página. Só foi encontrado
+   inspecionando `getComputedStyle` e `document.styleSheets` via Playwright
+   (instalado nesta sessão, `pip install playwright` +
+   `playwright install chromium`) — **ler o CSS-fonte não é suficiente
+   pra confirmar uma correção visual, precisa rodar num navegador de
+   verdade.** Corrigido qualificando o seletor com o pai
+   (`.site-footer-social .site-footer-social-icon`, duas classes).
+6. **Back-office ficou pra trás do site público de novo.** O `<h2>` do
+   back-office não tinha a mesma linha divisória (`pb-2 border-b-2
+   border-rule`) que foi adicionada só em `docs/index.html` numa correção
+   anterior. Corrigido; **prática adotada daqui pra frente: rodar
+   localmente (Django dev server + Playwright/captura de tela) antes de
+   dar commit em mudança visual, não só depois** — o usuário pediu isso
+   explicitamente ("você não roda localmente antes de subir no github?").
+7. **Migração pra produção (dadosfnp), 3 descobertas em sequência:**
+   (a) `dadosfnp/folheto-mobilidade` nunca tinha recebido nenhum `git
+   push` — repo vazio desde a criação, resolvido com o primeiro push de
+   `main`/`next` pra lá; (b) `brunofnp` perdeu/recuperou acesso de escrita
+   lá no mesmo dia (2ª vez que isso acontece, ver
+   `projeto_acesso_dadosfnp_bloqueado` na memória); (c) habilitar GitHub
+   Pages via API precisa de permissão **admin** (não só `push`), então
+   esse passo específico sempre vai precisar de alguém com admin no org,
+   mesmo com `push` liberado — feito manualmente pelo usuário. QR
+   code/campo `"url"` dos 4 JSONs atualizados de `fnp.org.br/mobilidade`
+   (placeholder) pra `https://dadosfnp.github.io/folheto-mobilidade/`
+   (site real, confirmado pelo usuário). GitHub Pages do repo pessoal
+   (`brunofnp/folheto-mobilidade`) foi desligado de propósito, pra não
+   ter dois sites no ar — a distribuição pública agora é só
+   `dadosfnp.github.io/folheto-mobilidade`.
+8. **Nunca mais coautoria do Claude em commit, em nenhum projeto.**
+   Pedido explícito do usuário (2ª vez que precisou pedir — não tinha
+   sido salvo antes). Registrado em `~/.claude/CLAUDE.md` (global, todos
+   os projetos) e na memória deste projeto
+   (`feedback_sem_coautoria_claude`). Os 17 commits desta sessão que já
+   tinham a linha `Co-Authored-By: Claude` foram reescritos (`git
+   filter-branch --msg-filter`) e republicados com `--force` em `main`/
+   `next`, nos dois remotos — confirmado via API do GitHub que só
+   `brunofnp` aparece como autor agora.
+
 ---
 
 ## Diretrizes de Engenharia
@@ -623,9 +731,11 @@ escrever, é dado que precisa vir de outro lugar):
   texto padrão do tema até alguém escrever um específico.
 
 **Trabalho técnico pendente:**
-- **URL do QR code — resolvido (2026-09-21).** Trocado o placeholder `https://fnp.org.br/mobilidade` pelo site de distribuição real, `https://dadosfnp.github.io/folheto-mobilidade/` (confirmado pelo usuário), em `URL_PADRAO` (`mobilidade.py`) e no campo `"url"` dos 4 JSONs de `data/mobilidade/`. Depende do GitHub Pages estar habilitado em `dadosfnp/folheto-mobilidade` para resolver de verdade (ver bullet do site estático abaixo).
+- **URL do QR code — resolvido (2026-09-21).** Trocado o placeholder `https://fnp.org.br/mobilidade` pelo site de distribuição real, `https://dadosfnp.github.io/folheto-mobilidade/` (confirmado pelo usuário), em `URL_PADRAO` (`mobilidade.py`) e no campo `"url"` dos 4 JSONs de `data/mobilidade/`. GitHub Pages já habilitado em `dadosfnp/folheto-mobilidade` (o usuário fez manualmente) — o link resolve de verdade.
 - **Logo oficial FNP — resolvido em 2026-09-21** (ver `assets/README.md` e Decisão 5, quarto adendo). `assets/logos/fnp-logo.png` existe e aparece no rodapé de todas as páginas de conteúdo e à esquerda da barra separadora na capa.
 - Fontes oficiais (Barlow Condensed + Inter) — baixar com `tools/baixar_fontes.py` antes de qualquer PDF "para valer" (sem elas, sai em Helvetica). Já feito na máquina onde os PDFs de Campinas/Montes Claros foram gerados.
 - **Espaçamento vertical da A4 — resolvido (2026-09-21).** Não foi um recálculo manual de cada componente: `draw_decoracao_rodape` (portado do `_decorar_rodape` do folheto-ifem, ver Decisão 5) preenche o respiro no fim da página com o alfabeto modular (`assets/padroes/arte0|1|2.png`) sempre que sobra espaço — mesmo mecanismo, mesmos arquivos, do folheto-ifem. Ver `DESIGN_SYSTEM.md` §5.13.
-- **Site estático de distribuição (`docs/`) — migrando pro domínio da organização, Pages ainda não religado (2026-09-21).** O QR code e o campo `"url"` dos 4 JSONs já apontam pra `https://dadosfnp.github.io/folheto-mobilidade/` (não mais o placeholder `fnp.org.br/mobilidade`, nem o domínio pessoal). A release oficial dos PDFs (`v1`) está em `dadosfnp/folheto-mobilidade` (produção). **GitHub Pages do repo pessoal (`brunofnp/folheto-mobilidade`) foi desligado de propósito** (pedido do usuário, pra não ter dois sites no ar durante a migração) — hoje **nenhum site público está no ar** até o passo abaixo ser feito. **Passo manual pendente, fora do alcance de código:** habilitar Pages em `dadosfnp/folheto-mobilidade` (Settings → Pages → branch `main`, pasta `/docs`) — tentei pela API (`POST .../pages`) e falhou com 404 porque exige permissão `admin` no repo; `brunofnp` só tem `push`/`triage` lá (ver `projeto_acesso_dadosfnp_bloqueado` na memória — mesmo tipo de degrau de permissão, desta vez pra uma ação que só admin faz). Assim que alguém com admin habilitar, o QR dos PDFs já resolve sem precisar regenerar nada.
+- **Site estático de distribuição (`docs/`) — migrado pra produção, no ar (2026-09-21).** `https://dadosfnp.github.io/folheto-mobilidade/` está no ar (Pages em `dadosfnp/folheto-mobilidade`, branch `main`, pasta `/docs` — habilitado manualmente pelo usuário, exige permissão `admin` que a API não tinha). A release oficial dos PDFs (`v1`) está lá também. GitHub Pages do repo pessoal (`brunofnp/folheto-mobilidade`) foi desligado de propósito, pra não ter dois sites no ar — a distribuição pública é só o domínio da organização agora.
+
+- **Lettermark "MOBILIDADE" no stripe — espelhamento esquerda↔direita, correção aplicada mas NÃO confirmada visualmente (2026-09-21).** Ver Decisão 5, sétimo adendo, item 3, pro histórico completo da investigação (inclusive a ressalva sobre `_glifo_b`/`_glifo_d` serem simétricos no eixo afetado pelo fix). Se o usuário disser que ainda está errado numa próxima sessão, não presumir que é a mesma causa — reabrir a investigação letra por letra com a técnica de marcar retângulo vermelho no PDF via PyMuPDF (mais confiável que comparar screenshots pequenos a olho).
 - `tools/dados_tratados_para_json.py` está escrito e funcionando para o formato de `data/external/` atual — se esse formato mudar (nova coluna, planilha reestruturada), o script precisa acompanhar.
