@@ -368,10 +368,18 @@ vetorial girado em tempo de execução, sem asset raster nenhum).
 - Reaproveita o mesmo alfabeto modular do §5.14 (`_GLIFOS_MODULARES`), só
   que em módulo bem menor (`modulo=7.0`, contra ~80pt na capa) e traço fino
   (`0.5pt`) — cabe inteiro dentro da largura do stripe (`STRIPE_W=20pt`).
-- Rotação: `c.translate(cx, (page_h + largura)/2); c.rotate(-90)` — desenha
-  a palavra "deitada" (eixo X normal) e gira o canvas inteiro, não a
-  palavra ponto a ponto; centraliza verticalmente contra a altura da
-  página via `largura_alfabeto_modular_palavra`.
+- Rotação: `c.translate(cx, (y_min + page_h + largura)/2); c.rotate(-90)` —
+  desenha a palavra "deitada" (eixo X normal) e gira o canvas inteiro, não
+  a palavra ponto a ponto; centraliza verticalmente contra
+  `largura_alfabeto_modular_palavra`.
+- `y_min` (padrão `0`, ou seja, centraliza contra a página inteira) deixa
+  restringir essa centralização a partir de uma altura — a capa passa
+  `y_min=faixa_h` (o topo da faixa branca de informação) pra centralizar
+  a palavra só dentro da área do mosaico, não da página inteira. Sem isso,
+  a palavra ficava no meio vertical exato da página — bem mais alto que a
+  faixa branca, sobrando stripe vazio embaixo dela até o número de página.
+  Achado a partir de captura de tela do usuário com uma seta indicando a
+  posição certa (mais perto da faixa, não no meio da página).
 - `setStrokeAlpha(0.35)` — mais discreto que o alfabeto da capa (que é o
   elemento principal da página); no stripe é textura de fundo, não deve
   competir com o conteúdo.

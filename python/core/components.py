@@ -731,7 +731,8 @@ def draw_capa_padrao(c, page_w, page_h, *,
     draw_stripe(c, page_w, page_h, lado)
     draw_page_number(c, page_w, 1, lado)
     if palavra_stripe:
-        draw_lettermark_stripe(c, palavra_stripe, page_w, page_h, lado)
+        draw_lettermark_stripe(c, palavra_stripe, page_w, page_h, lado,
+                               y_min=faixa_h)
 
 
 # ─── Cards estilo landing IFEM (categoria + sub-cards aninhados) ─────────────
@@ -1516,7 +1517,8 @@ def draw_alfabeto_modular_palavra(c, palavra: str, x: float, y: float, modulo: f
 
 
 def draw_lettermark_stripe(c, palavra: str, page_w: float, page_h: float,
-                           lado: str = "dir", modulo: float = 7.0) -> None:
+                           lado: str = "dir", modulo: float = 7.0,
+                           y_min: float = 0.0) -> None:
     """Palavra soletrada VERTICALMENTE dentro do stripe lateral, no alfabeto
     modular (§5.14) — mesmo padrão do folheto-ifem, que tem "IFEM" vertical
     no stripe via um PNG pré-rotacionado (`core/ifem_assets.py::
@@ -1527,20 +1529,27 @@ def draw_lettermark_stripe(c, palavra: str, page_w: float, page_h: float,
     Traço bem mais fino que o da capa (`modulo` pequeno pede isso — senão
     as formas se fundem) e branco translúcido, pra ler como marca d'água
     discreta no azul do stripe, não competir com o número de página.
-    Centralizado na altura inteira da página; leitura de baixo pra cima
-    (primeira letra embaixo, subindo — pedido explícito do usuário, com uma
-    seta desenhada apontando pra cima sobre o stripe). A rotação do canvas
-    continua a mesma; o que inverte a direção é desenhar a palavra ao
-    contrário (`palavra[::-1]`) — a última letra desenhada (primeira letra
-    da palavra) fica no topo, a primeira desenhada (última letra da
-    palavra) fica embaixo, então ler de baixo pra cima dá a palavra certa."""
+    Leitura de baixo pra cima (primeira letra embaixo, subindo — pedido
+    explícito do usuário, com uma seta desenhada apontando pra cima sobre o
+    stripe). A rotação do canvas continua a mesma; o que inverte a direção é
+    desenhar a palavra ao contrário (`palavra[::-1]`) — a última letra
+    desenhada (primeira letra da palavra) fica no topo, a primeira desenhada
+    (última letra da palavra) fica embaixo, então ler de baixo pra cima dá a
+    palavra certa.
+
+    `y_min` restringe a centralização vertical a partir dessa altura (em vez
+    da página inteira, `0`) — usado pela capa (`draw_capa_padrao` passa
+    `y_min=faixa_h`) pra centralizar só dentro da área do mosaico, acima da
+    faixa branca de informação, em vez de cair no meio da página inteira e
+    sobrar stripe vazio entre a palavra e a faixa (reportado pelo usuário
+    com uma seta indicando a posição certa, mais perto da faixa)."""
     largura = largura_alfabeto_modular_palavra(palavra, modulo)
     if largura <= 0:
         return
     cx = STRIPE_W / 2 if lado == "esq" else page_w - STRIPE_W / 2
     c.saveState()
     c.setStrokeAlpha(0.35)
-    c.translate(cx, (page_h + largura) / 2)
+    c.translate(cx, (y_min + page_h + largura) / 2)
     c.rotate(-90)
     draw_alfabeto_modular_palavra(c, palavra[::-1], 0, -modulo, modulo,
                                   cores=(WHITE, WHITE, WHITE), traco=0.5)
