@@ -63,10 +63,11 @@ def _fmt_int(v) -> str:
 class FolhetoMobilidade(FolhetoFNP):
     titulo_publicacao = "SEGURANÇA VIÁRIA · DIAGNÓSTICO PRELIMINAR FNP"
 
-    # PLACEHOLDER — não confirmado que esta URL existe/resolve. Nunca enviar
-    # para impressão sem sobrescrever via campo "url" no JSON (ver SCHEMA.md)
-    # com um endereço real e testado. Ver CLAUDE.md, seção Pendências.
-    URL_PADRAO = "https://fnp.org.br/mobilidade"
+    # Site de distribuição pública (GitHub Pages, produção). Confirmado
+    # pelo usuário em 2026-09-21 (ver CLAUDE.md, Decisão 4). Cada município
+    # em data/mobilidade/*.json já tem o campo "url" preenchido igual a
+    # este; usado como fallback só se algum município novo ainda não tiver.
+    URL_PADRAO = "https://dadosfnp.github.io/folheto-mobilidade/"
 
     # Lettermark vertical no stripe, em toda página — mesmo padrão do
     # folheto-ifem (que tem "IFEM" vertical no stripe via PNG

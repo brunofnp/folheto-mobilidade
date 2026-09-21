@@ -623,7 +623,7 @@ escrever, é dado que precisa vir de outro lugar):
   texto padrão do tema até alguém escrever um específico.
 
 **Trabalho técnico pendente:**
-- **URL do QR code é placeholder, não confirmada** (`FolhetoMobilidade.URL_PADRAO` em `mobilidade.py` = `https://fnp.org.br/mobilidade`) — nunca enviar um PDF para impressão sem sobrescrever com uma URL real e testada via o campo `"url"` no JSON de dados. Vale pros dois pilotos reais também, que hoje ainda usam o placeholder.
+- **URL do QR code — resolvido (2026-09-21).** Trocado o placeholder `https://fnp.org.br/mobilidade` pelo site de distribuição real, `https://dadosfnp.github.io/folheto-mobilidade/` (confirmado pelo usuário), em `URL_PADRAO` (`mobilidade.py`) e no campo `"url"` dos 4 JSONs de `data/mobilidade/`. Depende do GitHub Pages estar habilitado em `dadosfnp/folheto-mobilidade` para resolver de verdade (ver bullet do site estático abaixo).
 - **Logo oficial FNP — resolvido em 2026-09-21** (ver `assets/README.md` e Decisão 5, quarto adendo). `assets/logos/fnp-logo.png` existe e aparece no rodapé de todas as páginas de conteúdo e à esquerda da barra separadora na capa.
 - Fontes oficiais (Barlow Condensed + Inter) — baixar com `tools/baixar_fontes.py` antes de qualquer PDF "para valer" (sem elas, sai em Helvetica). Já feito na máquina onde os PDFs de Campinas/Montes Claros foram gerados.
 - **Espaçamento vertical da A4 — resolvido (2026-09-21).** Não foi um recálculo manual de cada componente: `draw_decoracao_rodape` (portado do `_decorar_rodape` do folheto-ifem, ver Decisão 5) preenche o respiro no fim da página com o alfabeto modular (`assets/padroes/arte0|1|2.png`) sempre que sobra espaço — mesmo mecanismo, mesmos arquivos, do folheto-ifem. Ver `DESIGN_SYSTEM.md` §5.13.

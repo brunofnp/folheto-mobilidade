@@ -274,5 +274,5 @@
   "leitos_uti_hipotetico": {
     "nota": "Pergunta orientadora do projeto (item 8 do briefing): se não houvesse acidentes de trânsito, quantos leitos de UTI ficariam disponíveis para outras doenças? Cálculo pendente do dado de internação consolidado."
   },
-  "url": "https://fnp.org.br/mobilidade"
+  "url": "https://dadosfnp.github.io/folheto-mobilidade/"
 }
