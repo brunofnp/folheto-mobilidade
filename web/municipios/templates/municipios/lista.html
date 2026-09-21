@@ -1,6 +1,6 @@
 {% extends "municipios/base.html" %}
 {% load static %}
-{% block titulo %}Municípios — Folheto Mobilidade{% endblock %}
+{% block titulo %}Municípios · Folheto Mobilidade{% endblock %}
 {% block header_extra %}
   <p class="text-xs md:text-sm text-muted whitespace-nowrap">{{ municipios|length }} município{{ municipios|length|pluralize }} disponíve{{ municipios|length|pluralize:"l,is" }}</p>
 {% endblock %}
@@ -10,7 +10,7 @@
     <p class="text-muted mt-2 text-sm md:text-base">
       Cada folheto traz a comparação da taxa de mortalidade no trânsito, a
       evolução da frota e o peso das internações por sinistro no sistema de
-      saúde. Veja o preview ou baixe o PDF — os dois sempre geram na hora, a
+      saúde. Veja o preview ou baixe o PDF: os dois sempre geram na hora, a
       partir do dado mais recente.
     </p>
   </section>
@@ -88,7 +88,7 @@
             <span class="inline-block w-2.5 h-2.5 rounded-sm align-middle shrink-0 {% if m.pdf_existe %}bg-green{% else %}bg-rule{% endif %}"
                   title="{% if m.pdf_existe %}Já foi gerado ao menos uma vez{% else %}Ainda não foi gerado{% endif %}"></span>
             <h3 class="title-display text-lg text-blue-dark truncate">
-              {{ m.nome }} {% if m.uf %}<span class="text-muted font-normal text-base">— {{ m.uf }}</span>{% endif %}
+              {{ m.nome }} {% if m.uf %}<span class="text-muted font-normal text-base">· {{ m.uf }}</span>{% endif %}
             </h3>
           </div>
           <p class="text-xs text-muted mt-1">

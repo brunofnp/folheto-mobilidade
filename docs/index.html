@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Segurança Viária — Folhetos Municipais</title>
-<meta name="description" content="Baixe a Ficha de Diagnóstico Preliminar de Segurança Viária do seu município — Frente Nacional de Prefeitas e Prefeitos.">
+<title>Segurança Viária · Folhetos Municipais</title>
+<meta name="description" content="Baixe a Ficha de Diagnóstico Preliminar de Segurança Viária do seu município, da Frente Nacional de Prefeitas e Prefeitos.">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,7 +103,7 @@
     <div class="max-w-4xl mx-auto px-4 py-3 md:py-4 flex items-center gap-3">
       <span class="title-display text-lg md:text-xl text-blue-dark">Segurança Viária</span>
       <p class="hidden sm:block text-xs md:text-sm text-muted leading-tight min-w-0">
-        Ficha de Diagnóstico Preliminar — Frente Nacional de Prefeitas e Prefeitos
+        Ficha de Diagnóstico Preliminar · Frente Nacional de Prefeitas e Prefeitos
       </p>
       <span class="ml-auto text-xs text-muted hidden md:inline" id="meta"></span>
     </div>
@@ -315,7 +315,7 @@
       li.className = 'bg-white rounded-xl border border-rule px-4 py-3 flex flex-col md:flex-row md:items-center gap-3 hover:border-blue-dark/50 transition';
       li.innerHTML = `
         <div class="flex-1 min-w-0">
-          <h3 class="title-display text-lg text-blue-dark truncate">${m.municipio} <span class="text-muted font-normal text-base">— ${m.uf}</span></h3>
+          <h3 class="title-display text-lg text-blue-dark truncate">${m.municipio} <span class="text-muted font-normal text-base">· ${m.uf}</span></h3>
           <p class="text-xs text-muted mt-1">
             População <strong class="text-ink">${fmtPop(m.populacao)}</strong> ·
             Taxa de mortalidade no trânsito <strong class="text-ink">${fmtTaxa(m.taxa_mortalidade_total)}</strong> / 100 mil hab.
