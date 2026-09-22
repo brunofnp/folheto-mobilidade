@@ -368,38 +368,38 @@ vetorial girado em tempo de execução, sem asset raster nenhum).
 - Reaproveita o mesmo alfabeto modular do §5.14 (`_GLIFOS_MODULARES`), só
   que em módulo bem menor (`modulo=7.0`, contra ~80pt na capa) e traço fino
   (`0.5pt`) — cabe inteiro dentro da largura do stripe (`STRIPE_W=20pt`).
-- Rotação: `c.translate(cx, (y_min + page_h + largura)/2); c.rotate(-90)` —
+- Rotação: `c.translate(cx, margem_inferior + largura); c.rotate(-90)` —
   desenha a palavra "deitada" (eixo X normal) e gira o canvas inteiro, não
-  a palavra ponto a ponto; centraliza verticalmente contra
-  `largura_alfabeto_modular_palavra`.
-- `y_min` (padrão `0`, ou seja, centraliza contra a página inteira) deixa
-  restringir essa centralização a partir de uma altura — a capa passa
-  `y_min=faixa_h` (o topo da faixa branca de informação) pra centralizar
-  a palavra só dentro da área do mosaico, não da página inteira. Sem isso,
-  a palavra ficava no meio vertical exato da página — bem mais alto que a
-  faixa branca, sobrando stripe vazio embaixo dela até o número de página.
-  Achado a partir de captura de tela do usuário com uma seta indicando a
-  posição certa (mais perto da faixa, não no meio da página).
+  a palavra ponto a ponto.
+- **Ancorada perto do número de página, não centralizada na altura da
+  página** (2026-09-22, retrabalhada duas vezes no mesmo dia). Primeira
+  versão centralizava a palavra contra um intervalo `[y_min, page_h]`
+  (`y_min=0` nas páginas de conteúdo, `y_min=faixa_h` só na capa) — o
+  usuário apontou, com um screenshot da capa circulando a posição
+  desejada, que queria essa MESMA posição em toda página, e que ela devia
+  ficar "próximo ao número da página". A primeira tentativa de
+  padronização (usar `y_min=faixa_h` em toda página) deixou a posição
+  consistente entre páginas, mas ainda longe do número — não resolvia o
+  pedido de proximidade, só a consistência. Substituído por
+  `margem_inferior` (padrão `40pt`): a BASE da palavra fica a essa
+  distância fixa da base da página, o mesmo valor em toda página
+  (`draw_page_number` desenha o número em `y=14`) — sem `y_min`
+  nenhum, sem depender de `faixa_h` da capa. Verificado extraindo as
+  coordenadas reais dos desenhos do PDF (`page.get_drawings()`, PyMuPDF),
+  não só comparando screenshots — confirma que as 6 páginas do folheto
+  saem com o mesmo intervalo Y exato.
 - `setStrokeAlpha(0.35)` — mais discreto que o alfabeto da capa (que é o
   elemento principal da página); no stripe é textura de fundo, não deve
   competir com o conteúdo.
 - `lado` (`"dir"`/`"esq"`) decide qual stripe recebe a palavra — sempre o
   mesmo lado que `draw_stripe`/`draw_page_number` já usam naquela página,
   nunca hardcoded.
-- Chamado de `_topo_pagina` em `mobilidade.py` (toda página de conteúdo) e
-  também do fim de `draw_capa_padrao` (capa) — `PALAVRA_STRIPE = "MOBILIDADE"`
-  é constante do tema, não do núcleo; um tema novo passaria a própria
-  palavra ou omitiria o parâmetro.
-- **`y_min` é o MESMO em toda página, não só na capa** (2026-09-22, pedido
-  do usuário: a posição da capa como referência pra todas as páginas).
-  `FolhetoMobilidade.FRACAO_Y_MIN_LETTERMARK = 0.27` (mesma fração de
-  `faixa_h` na capa) é passada por `_topo_pagina` E por
-  `_pag_encerramento_decorativo`, não só por `draw_capa_padrao` — antes,
-  só a capa usava esse `y_min`; páginas de conteúdo centralizavam contra
-  a altura inteira (`y_min=0`, o padrão), deixando a palavra no meio
-  vertical da página em vez de na mesma posição da capa. Consistência de
-  posição em toda página agora é intencional, não um efeito colateral de
-  cada chamador decidir por conta própria.
+- Chamado de `_topo_pagina` em `mobilidade.py` (toda página de conteúdo),
+  do fim de `draw_capa_padrao` (capa) e de `_pag_encerramento_decorativo`
+  (página 6) — sempre com o `margem_inferior` padrão, nenhum chamador
+  passa um valor próprio. `PALAVRA_STRIPE = "MOBILIDADE"` é constante do
+  tema, não do núcleo; um tema novo passaria a própria palavra ou
+  omitiria o parâmetro.
 
 ### 5.17 Painel decorativo (`draw_mosaico_decorativo` — NOVO, página de encerramento)
 Painel quadrado pra página de encerramento (§6, página 6). Pedido

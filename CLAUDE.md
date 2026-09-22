@@ -695,15 +695,31 @@ produção, uma sequência de correções e um problema em aberto:
 **Nono adendo (2026-09-22, mesmo dia):** o usuário mandou a capa como
 screenshot com a posição do lettermark circulada em vermelho e pediu que
 TODA página usasse essa mesma posição (não só a capa) — "próximo ao
-número da página". Antes disso, só `draw_capa_padrao` passava
-`y_min=faixa_h` pra `draw_lettermark_stripe`; `_topo_pagina` (todas as
-páginas de conteúdo) e `_pag_encerramento_decorativo` (página 6) usavam
-o padrão `y_min=0`, centralizando a palavra na altura INTEIRA da
-página — bem mais alto do que na capa, inconsistente entre páginas.
-Nova constante `FolhetoMobilidade.FRACAO_Y_MIN_LETTERMARK = 0.27` (mesma
-fração de `faixa_h` na capa) agora é passada nas 3 chamadas, garantindo
-a mesma posição vertical do lettermark em toda página do folheto. Ver
+número da página". **Primeira tentativa, incompleta:** só padronizei a
+posição (nova constante `FRACAO_Y_MIN_LETTERMARK = 0.27`, mesma fração de
+`faixa_h` da capa, passada em toda página) — isso deixou a posição
+CONSISTENTE entre páginas, mas ainda longe do número, porque a fórmula em
+si (centralizar dentro de `[y_min, page_h]`) nunca colocava a palavra
+perto da base da página, só relativamente mais alto ou mais baixo dentro
+de uma faixa ampla. O usuário mandou a mesma screenshot de novo:
+"Continua no mesmo lugar. Preciso que resolva isso, não cometa erros" —
+sinal de que a consistência não era o problema, era a posição em si.
+
+**Correção de verdade:** troquei a lógica de centralização (`y_min`) por
+uma âncora fixa a partir da base da página — `margem_inferior` (padrão
+`40pt`), a distância entre a BASE da palavra e a base física da página
+(`draw_page_number` desenha o número em `y=14`). Sem `y_min`, sem
+`faixa_h`, sem depender da capa — o mesmo valor em toda página, capa
+inclusa. `FRACAO_Y_MIN_LETTERMARK` foi removida (ficou sem uso). Desta
+vez verifiquei com `page.get_drawings()` (PyMuPDF) antes de considerar
+resolvido — as 6 páginas saem com o Y exato idêntico
+(`653.8`–`801.9`pt em coordenadas de tela, bem perto do número). Ver
 `DESIGN_SYSTEM.md` §5.16.
+
+**Lição registrada:** quando o usuário diz "continua no mesmo lugar"
+depois de uma correção, não presumir que o problema era só consistência
+entre páginas — conferir se a POSIÇÃO ALVO em si mudou, não só se ficou
+igual em todo lugar. As duas coisas são independentes.
 
 ---
 
