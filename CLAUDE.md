@@ -775,6 +775,28 @@ empilhados à esquerda + 2 meios-círculos de raio `m/2` à direita, mesma
 proporção de `_RECEITA_GLIFO_MOSAICO["B"]` — os dois sistemas (mosaico e
 stripe) leem B da mesma forma agora. Ver `DESIGN_SYSTEM.md` §5.14.
 
+**Décimo segundo adendo (2026-09-22, mesmo dia) — E, versão final.** O
+usuário mandou uma foto mais precisa confirmando que o "E" também vem de
+`Folheto_Alfabeto.jpeg`: mesmo círculo do "O", mas faltando o quadrante
+inferior-direito (3 de 4). `_glifo_e` reescrito pra desenhar só 3 dos 4
+`wedge` de `_glifo_o` — visualmente bem distinto de "O" (círculo
+completo), ao contrário da tentativa anterior (idêntica a O, gerava
+"MOBILIDADO"). PDFs regenerados e republicados na release v1. Ver
+`DESIGN_SYSTEM.md` §5.14.
+
+**Décimo terceiro adendo (2026-09-22, mesmo dia) — M reaplicado.** O
+usuário reenviou a MESMA foto de referência do M (pétalas duplas) e
+confirmou explicitamente que é ela mesma: "Essa será a letra M também
+importada do folheto IFEM". `_glifo_m` voltou pro desenho de pétalas
+duplas (centros diferentes pras duas metades, não o domo redondo de
+antes) — a mesma correção que tinha sido revertida no décimo primeiro
+adendo, agora reaplicada isoladamente (sem mexer em E/B/D ao mesmo
+tempo, que foi o que causou o problema da vez passada). PDFs regenerados
+e republicados na release v1. Com isso, M, B e E do stripe estão todos
+confirmados pelo usuário contra a fonte real (`Folheto_Alfabeto.jpeg`);
+só `D` mantém o desenho original (nunca teve correção pedida). Ver
+`DESIGN_SYSTEM.md` §5.14.
+
 ---
 
 ## Diretrizes de Engenharia

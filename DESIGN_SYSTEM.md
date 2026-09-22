@@ -285,14 +285,19 @@ reconstruída, letra por letra, a partir da imagem de referência).
   desde que o stripe (§5.16) passou a reaproveitar os mesmos glifos em
   traço bem mais fino (0.5pt) — sem isso, o traço grosso da capa ficaria
   desproporcional dentro dos 20pt do stripe.
-- **M vs. D:** as duas letras usam o mesmo domo de 180° (dois quartos de
-  círculo com o mesmo vértice) — sem mais nada, ficam indistinguíveis. `M`
-  ganha uma linha reta do vértice até o topo do arco (a "costura" entre as
-  duas cristas); `D` não ganha essa linha, porque ali o domo deve ler como
-  uma curva contínua só. Achado ao construir o stripe (§5.16): o traço fino
-  (0.5pt) e a rotação de 90° tornam essa diferença ainda mais sutil que na
-  capa — QA visual (recorte via PyMuPDF, nunca só "gerou sem erro") pegou o
-  caso antes de qualquer PDF real sair com M lendo como D.
+- **M — duas "pétalas" com centros diferentes, não um domo redondo
+  (2026-09-22, importado de `Folheto_Alfabeto.jpeg`, repo real do
+  folheto-ifem).** Versão original: dois quartos de círculo com o MESMO
+  vértice e MESMO raio `m` (centro no meio do bloco 2m×2m) — as duas
+  metades são partes do MESMO círculo, então se encontram tangencialmente
+  (lisas, sem "vale") no topo; só uma linha reta extra (a "costura", do
+  vértice até o topo) distinguia de `_glifo_d`/`_glifo_a`, e mesmo assim
+  ficava sutil. Reescrito com a receita real: cada pétala tem seu PRÓPRIO
+  centro (canto externo da própria metade, raio `m`) — como os centros
+  não coincidem, as duas curvas se cruzam formando um "vale" visível no
+  meio, não uma curva lisa. `arc`, não `wedge` — só a curva, sem os raios
+  retos até o vértice (que a referência real não tem). Não precisa mais
+  da linha de costura; a forma em si já é bem diferente de D/A.
 - **B — mesmo desenho do "B" do mosaico da capa (2026-09-22).** Pedido
   explícito do usuário: os dois sistemas (mosaico mascarado da capa,
   §5.15, e alfabeto em traço do stripe, aqui) devem desenhar B do MESMO
@@ -302,19 +307,24 @@ reconstruída, letra por letra, a partir da imagem de referência).
   usava uma espinha-linha (não quadrados) e um raio quase do módulo
   inteiro (`m*0.92`) — lia como B, mas num estilo visualmente diferente
   do mosaico.
-- **Duas tentativas descartadas nesta mesma sessão (2026-09-22), registro
-  pra não repetir:** (1) M como "arco ogival"/pétalas duplas + E idêntico
-  a O + B/D com 1 módulo de largura — construído a partir de fotos de
-  `Folheto_Alfabeto.jpeg` (repo real do folheto-ifem, clonado
-  temporariamente pra conferir na fonte), mas quebrou a palavra (E=O
-  gerava "MOBILIDADO") e o usuário pediu revert completo ("ficou muito
-  ruim"). (2) Consequência: **nunca fazer E igual a O**, mesmo que a
-  fonte de referência sugira formas parecidas — dentro da palavra
-  "MOBILIDADE" isso cria ambiguidade real de leitura, não só uma
-  diferença estética. `M`, `E` e a largura de `D` voltaram pra versão
-  original (domo redondo + costura; grid 2×2; 2 módulos) — só `B` foi
-  ajustado de fato, com a técnica descrita acima (reaproveitar a receita
-  já aprovada do mosaico, não reinventar a partir de uma foto nova).
+- **E — círculo de 3 quartos, falta o inferior-direito (2026-09-22,
+  importado de `Folheto_Alfabeto.jpeg`).** Mesmo `box`/`wedge` de
+  `_glifo_o`, mas desenha só 3 dos 4 quadrantes (pula o de ângulo `270`).
+  Visualmente bem distinto de `O` (círculo completo) — importante porque
+  uma tentativa anterior, no mesmo dia, fez E idêntico a O (achando que
+  era a mesma letra na folha de referência) e isso quebrou a palavra: com
+  E=O, a última letra de "MOBILIDADE" lia como "O", saindo "MOBILIDADO"
+  (reportado pelo usuário). **Lição: nunca fazer duas letras idênticas
+  dentro de uma palavra real, mesmo que a fonte de referência sugira
+  formas parecidas** — ambiguidade de leitura é um problema mais sério
+  que fidelidade estética à fonte.
+- **Histórico da rodada de correções (2026-09-22):** a primeira tentativa
+  de aplicar as fotos de referência mudou M, E, B e D todos de uma vez
+  (E=O, B/D com 1 módulo de largura) — quebrou a palavra e o usuário
+  pediu revert completo ("ficou muito ruim"). As correções acima (M, B,
+  E) foram reaplicadas uma de cada vez, depois de confirmadas
+  individualmente pelo usuário com fotos mais precisas; `D` manteve a
+  largura original de 2 módulos (nunca teve uma correção confirmada).
 - `largura_alfabeto_modular_palavra(palavra, modulo)` calcula a largura
   total sem desenhar nada — usado por `draw_capa_padrao` pra centralizar a
   palavra e escolher o `modulo` (mira ~80% da largura de conteúdo

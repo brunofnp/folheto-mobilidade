@@ -1389,21 +1389,23 @@ _TRACO_MODULAR = 2.2  # espessura do traço — precisa ler como logotipo, não 
 
 
 def _glifo_m(c, x0, y0, m, cores, traco=_TRACO_MODULAR):
-    """'M': dois quartos de círculo formando as duas cristas do topo (mesmo
-    vértice, no centro do bloco 2m×2m) + dois quadrados na base. Em cor
-    única (sem a alternância de cor por wedge que a capa usa), as duas
-    cristas se fundiam visualmente num arco só, liso — ficava indistinguível
-    do 'A' (reportado pelo usuário no lettermark do stripe, §5.16). A linha
-    reta do vértice até o topo do arco marca a "costura" entre as cristas
-    mesmo com as duas na mesma cor."""
-    box = (x0, y0, x0 + 2 * m, y0 + 2 * m)
+    """'M': duas "pétalas" no topo, cada uma ancorada num canto externo
+    (topo-esquerda / topo-direita) e descendo até o ponto compartilhado
+    no meio da base do arco — desenho importado de `Folheto_Alfabeto.jpeg`
+    (repo real do folheto-ifem), confirmado pelo usuário com 2 imagens de
+    referência + reconfirmado depois de um revert temporário (ver
+    Decisão 5, décimo primeiro/terceiro adendo) — não é o mesmo domo
+    redondo de `_glifo_a` (mesmo vértice/raio pras duas metades, funde
+    numa curva lisa só). Aqui cada pétala tem seu PRÓPRIO centro (canto
+    externo da própria metade, raio `m`) — os dois arcos só se cruzam no
+    "vale" do meio porque os centros não coincidem. `arc`, não `wedge` —
+    só a curva, sem os raios retos até o vértice."""
+    base_y = y0 + m  # linha onde o arco encontra os quadrados
     c.setLineWidth(traco)
     c.setStrokeColor(cores[0])
-    c.wedge(*box, 90, 90, stroke=1, fill=0)
+    c.arc(x0 - m, base_y - m, x0 + m, base_y + m, 0, 90)
     c.setStrokeColor(cores[1])
-    c.wedge(*box, 0, 90, stroke=1, fill=0)
-    c.setStrokeColor(cores[0])
-    c.line(x0 + m, y0 + m, x0 + m, y0 + 2 * m)
+    c.arc(x0 + m, base_y - m, x0 + 3 * m, base_y + m, 90, 90)
     c.setStrokeColor(cores[2])
     c.rect(x0, y0, m, m, fill=0, stroke=1)
     c.rect(x0 + m, y0, m, m, fill=0, stroke=1)
@@ -1496,17 +1498,17 @@ def _glifo_a(c, x0, y0, m, cores, traco=_TRACO_MODULAR):
 
 
 def _glifo_e(c, x0, y0, m, cores, traco=_TRACO_MODULAR):
-    """'E': espinha vertical (2 quadrados à esquerda) + topo e base à
-    direita (2 quadrados) — lê como um "C" quadrado; aproximação
-    deliberada (a grade 2×2 não tem uma terceira linha pro travessão do
-    meio de um E "de verdade")."""
+    """'E': círculo igual ao 'O', mas faltando o quarto inferior-direito
+    (3 de 4 quadrantes) — desenho importado do folheto-ifem real
+    (`Folheto_Alfabeto.jpeg`), confirmado pelo usuário com uma imagem de
+    referência. Diferente o bastante de 'O' (círculo completo) pra não
+    repetir o problema já visto uma vez: com E e O idênticos, a palavra
+    "MOBILIDADE" saía lendo "MOBILIDADO" (a última letra parecia um O)."""
+    box = (x0, y0, x0 + 2 * m, y0 + 2 * m)
     c.setLineWidth(traco)
-    c.setStrokeColor(cores[0])
-    c.rect(x0, y0 + m, m, m, fill=0, stroke=1)
-    c.rect(x0 + m, y0 + m, m, m, fill=0, stroke=1)
-    c.setStrokeColor(cores[1])
-    c.rect(x0, y0, m, m, fill=0, stroke=1)
-    c.rect(x0 + m, y0, m, m, fill=0, stroke=1)
+    for i, ang in enumerate((0, 90, 180)):
+        c.setStrokeColor(cores[i % len(cores)])
+        c.wedge(*box, ang, 90, stroke=1, fill=0)
     return 2 * m
 
 
