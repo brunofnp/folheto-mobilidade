@@ -368,9 +368,24 @@ vetorial girado em tempo de execução, sem asset raster nenhum).
 - Reaproveita o mesmo alfabeto modular do §5.14 (`_GLIFOS_MODULARES`), só
   que em módulo bem menor (`modulo=7.0`, contra ~80pt na capa) e traço fino
   (`0.5pt`) — cabe inteiro dentro da largura do stripe (`STRIPE_W=20pt`).
-- Rotação: `c.translate(cx, margem_inferior + largura); c.rotate(-90)` —
-  desenha a palavra "deitada" (eixo X normal) e gira o canvas inteiro, não
-  a palavra ponto a ponto.
+- Rotação: `c.translate(cx, margem_inferior); c.rotate(90)` — desenha a
+  palavra "deitada" (eixo X normal, ORDEM NORMAL, sem `[::-1]`) e gira o
+  canvas inteiro, não a palavra ponto a ponto.
+- **"Espelhamento" (2026-09-22) — não era bug de geometria, era a
+  direção do giro.** Depois de duas rodadas de ajuste sem sucesso
+  (`scale(1,-1)`, depois padronizar `y_min`), o usuário continuava
+  reportando a palavra "espelhada verticalmente". Prova decisiva: renderizar
+  a mesma palavra "MOBI" (já aprovada, horizontal, na capa) e comparar
+  com o recorte do stripe rotacionado de volta — ficaram PIXEL A PIXEL
+  IDÊNTICOS, confirmando que a geometria das letras sempre esteve
+  correta, nunca houve espelhamento de verdade. O que sobrava era só a
+  direção do giro: com `rotate(-90)` (o original), a palavra lia certo
+  inclinando a cabeça pra ESQUERDA; o usuário queria ler certo inclinando
+  pra DIREITA. Trocado pra `rotate(90)` (sentido oposto) — e, como o
+  sentido do giro sozinho já inverte qual ponta fica embaixo, o
+  `palavra[::-1]` deixou de ser necessário (a ordem normal já lê "de
+  baixo pra cima" corretamente com este novo sentido). Confirmado pelo
+  usuário no PDF real ("Agora ficou correto").
 - **Ancorada perto do número de página, não centralizada na altura da
   página** (2026-09-22, retrabalhada duas vezes no mesmo dia). Primeira
   versão centralizava a palavra contra um intervalo `[y_min, page_h]`

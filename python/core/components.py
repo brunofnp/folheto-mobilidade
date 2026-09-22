@@ -1572,38 +1572,35 @@ def draw_lettermark_stripe(c, palavra: str, page_w: float, page_h: float,
     as formas se fundem) e branco translúcido, pra ler como marca d'água
     discreta no azul do stripe. Leitura de baixo pra cima (primeira letra
     embaixo, subindo — pedido explícito do usuário, com uma seta desenhada
-    apontando pra cima sobre o stripe). A rotação do canvas continua a
-    mesma; o que inverte a direção é desenhar a palavra ao contrário
-    (`palavra[::-1]`) — a última letra desenhada (primeira letra da
-    palavra) fica no topo, a primeira desenhada (última letra da palavra)
-    fica embaixo, então ler de baixo pra cima dá a palavra certa.
+    apontando pra cima sobre o stripe).
+
+    Rotação `+90°` (não `-90°`): a diferença entre as duas é qual sentido
+    de inclinação de cabeça lê a palavra corretamente. `-90°` lia certo
+    inclinando a cabeça pra ESQUERDA; o usuário pediu explicitamente pra
+    ler certo inclinando pra DIREITA — testado com as duas opções lado a
+    lado (a prova de que a geometria das letras em si sempre esteve
+    correta — nunca houve espelhamento de verdade — foi rotacionar o
+    recorte do stripe de volta e comparar pixel a pixel com o "MOBI"
+    horizontal já aprovado na capa: idênticos). Com `+90°`, a palavra é
+    desenhada NA ORDEM NORMAL (sem `[::-1]`) — a primeira letra desenhada
+    já fica embaixo, subindo naturalmente; o `[::-1]` só era necessário
+    com o sentido antigo.
 
     `margem_inferior`: distância entre a base da palavra e a base da
     página — ancora a palavra perto do número de página (`draw_page_
     number` desenha o número em `y=14`), não no meio da altura da página.
     Pedido explícito do usuário com um screenshot da capa circulando a
     posição desejada ("próximo ao número da página, em todas as
-    páginas") — uma tentativa anterior só centralizava a palavra dentro
-    de uma faixa mais alta (ver histórico em CLAUDE.md, Decisão 5), o que
-    deixava a palavra bem mais longe do número do que o pedido. O mesmo
-    valor vale pra toda página, inclusive a capa — não há mais um `y_min`
-    diferente só pra ela."""
+    páginas"). O mesmo valor vale pra toda página, inclusive a capa."""
     largura = largura_alfabeto_modular_palavra(palavra, modulo)
     if largura <= 0:
         return
     cx = STRIPE_W / 2 if lado == "esq" else page_w - STRIPE_W / 2
     c.saveState()
     c.setStrokeAlpha(0.35)
-    c.translate(cx, margem_inferior + largura)
-    c.rotate(-90)
-    # scale(1,-1): sem isso, cada letra saía espelhada (o lado da faixa que
-    # cada glifo usa pra seus próprios traços internos é o mesmo eixo que
-    # rotate(-90) mapeia pra largura do stripe) — a sequência de cima pra
-    # baixo (eixo x, inalterado aqui) já estava correta, só a orientação
-    # de cada letra dentro da faixa precisava inverter. Reportado pelo
-    # usuário comparando com referência visual do padrão real do IFEM.
-    c.scale(1, -1)
-    draw_alfabeto_modular_palavra(c, palavra[::-1], 0, -modulo, modulo,
+    c.translate(cx, margem_inferior)
+    c.rotate(90)
+    draw_alfabeto_modular_palavra(c, palavra, 0, -modulo, modulo,
                                   cores=(WHITE, WHITE, WHITE), traco=0.5)
     c.restoreState()
 

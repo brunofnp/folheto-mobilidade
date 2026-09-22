@@ -721,6 +721,35 @@ depois de uma correção, não presumir que o problema era só consistência
 entre páginas — conferir se a POSIÇÃO ALVO em si mudou, não só se ficou
 igual em todo lugar. As duas coisas são independentes.
 
+**Décimo adendo (2026-09-22, mesmo dia) — espelhamento do stripe,
+finalmente resolvido.** O usuário reportou de novo, desta vez
+"espelhada verticalmente". Prova decisiva pra separar "bug de geometria"
+de "direção de leitura": renderizei a mesma palavra "MOBI" (já aprovada,
+horizontal, na capa) e o mesmo texto passando pela transformação real de
+`draw_lettermark_stripe`, e comparei rotacionando o recorte do stripe de
+volta pro horizontal — ficaram **pixel a pixel idênticos**. Prova
+matemática de que a geometria das letras nunca esteve errada; o único
+grau de liberdade real era o SENTIDO do giro (`rotate(-90)` vs
+`rotate(90)`), que determina se a palavra lê certo inclinando a cabeça
+pra esquerda ou pra direita. Perguntado diretamente ao usuário (depois
+de ele recusar a página de comparação com 5 variantes por achar difícil
+de usar): ele quer ler certo inclinando pra DIREITA. Trocado
+`rotate(-90)` por `rotate(90)` em `draw_lettermark_stripe` — e, como essa
+troca sozinha já inverte qual ponta da palavra fica embaixo, o
+`palavra[::-1]` que existia desde o pedido de "ordem ascendente" deixou
+de ser necessário (removido). **Confirmado pelo usuário no PDF real**
+("Agora ficou correto"). Ver `DESIGN_SYSTEM.md` §5.16.
+
+**Lição registrada:** a ferramenta mais confiável pra decidir "isso é um
+bug real ou só uma direção que ainda não bate com a expectativa" foi
+comparar contra uma referência JÁ APROVADA (o "MOBI" horizontal da capa),
+não tentar advinhar a partir de descrições verbais ("espelhada",
+"vertical") que são ambíguas mesmo em português. Quando uma página de
+comparação com variantes lado a lado não for prática pro usuário usar,
+essa técnica (prova por identidade pixel a pixel contra algo já
+aprovado) é o próximo recurso, antes de tentar mais uma correção às
+cegas.
+
 ---
 
 ## Diretrizes de Engenharia
