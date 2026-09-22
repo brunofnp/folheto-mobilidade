@@ -416,7 +416,10 @@ class FolhetoMobilidade(FolhetoFNP):
                 legenda=False,
             )
             y -= 12
-            draw_caption(c, "Faixa destacada: gestão do prefeito atual. Fonte: SIH/DATASUS. Elaboração: FNP.", x, y)
+            # "Faixa destacada: gestão do prefeito atual." retirado a pedido
+            # do usuário; a citação de fonte (obrigatória, ver
+            # DESIGN_SYSTEM.md §7) continua.
+            draw_caption(c, "Fonte: SIH/DATASUS. Elaboração: FNP.", x, y)
             y -= 20
         else:
             y = draw_body(
@@ -462,11 +465,12 @@ class FolhetoMobilidade(FolhetoFNP):
         leitos = self.d.get("leitos_uti_hipotetico") or {}
         nota = leitos.get("nota")
         if nota:
-            # draw_destaque_box trunca silenciosamente após 2 linhas — feito
-            # pra citação curta, não pra um parágrafo. Título curto no box +
-            # texto completo em draw_body logo abaixo evita perder conteúdo
-            # sem aviso nenhum (mesma lição de CLAUDE.md — quase repeti o
-            # erro ao consolidar esta página).
+            # Só o box da pergunta em si aparece na cartilha; o texto
+            # explicativo de `nota` (que fala em "item do briefing" e
+            # "cálculo pendente", linguagem interna de projeto, não pra
+            # leitor final) foi retirado a pedido do usuário. `nota`
+            # continua controlando SE o box aparece (proxy de que este
+            # município já tem essa seção mapeada), só não é mais impresso.
             y -= 6
             draw_destaque_box(
                 c, "SE NÃO HOUVESSE SINISTROS DE TRÂNSITO",
@@ -474,7 +478,6 @@ class FolhetoMobilidade(FolhetoFNP):
                 x, y - 50, col_texto_w, h=58, font_size=13,
             )
             y -= 66
-            draw_body(c, nota, x + 8, y, col_texto_w - 16, size=8.5)
 
         # Bloco de QR, ao lado dos passos (mesma altura do início do texto)
         qr_x = x + col_texto_w + 20
