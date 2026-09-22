@@ -797,6 +797,13 @@ confirmados pelo usuário contra a fonte real (`Folheto_Alfabeto.jpeg`);
 só `D` mantém o desenho original (nunca teve correção pedida). Ver
 `DESIGN_SYSTEM.md` §5.14.
 
+**Ajuste no mesmo adendo:** a primeira versão das pétalas usava só `arc`
+(a curva, sem os raios retos do `wedge`) — o usuário apontou "faltou um
+traço de cada lado", comparando com a referência (que mostra as pétalas
+emolduradas por um retângulo completo). Adicionada uma linha reta na
+borda externa de cada pétala (de `base_y` até o topo). PDFs regenerados
+e republicados de novo na release v1.
+
 ---
 
 ## Diretrizes de Engenharia

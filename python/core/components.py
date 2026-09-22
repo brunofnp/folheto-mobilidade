@@ -1398,14 +1398,19 @@ def _glifo_m(c, x0, y0, m, cores, traco=_TRACO_MODULAR):
     redondo de `_glifo_a` (mesmo vértice/raio pras duas metades, funde
     numa curva lisa só). Aqui cada pétala tem seu PRÓPRIO centro (canto
     externo da própria metade, raio `m`) — os dois arcos só se cruzam no
-    "vale" do meio porque os centros não coincidem. `arc`, não `wedge` —
-    só a curva, sem os raios retos até o vértice."""
+    "vale" do meio porque os centros não coincidem. Cada pétala também
+    tem um traço reto na borda EXTERNA (de `base_y` até o topo) — sem
+    ele, a pétala fica só a curva solta, faltando o lado reto que a
+    referência real mostra (reportado pelo usuário depois da primeira
+    tentativa, só com `arc`)."""
     base_y = y0 + m  # linha onde o arco encontra os quadrados
     c.setLineWidth(traco)
     c.setStrokeColor(cores[0])
     c.arc(x0 - m, base_y - m, x0 + m, base_y + m, 0, 90)
+    c.line(x0, base_y, x0, y0 + 2 * m)
     c.setStrokeColor(cores[1])
     c.arc(x0 + m, base_y - m, x0 + 3 * m, base_y + m, 90, 90)
+    c.line(x0 + 2 * m, base_y, x0 + 2 * m, y0 + 2 * m)
     c.setStrokeColor(cores[2])
     c.rect(x0, y0, m, m, fill=0, stroke=1)
     c.rect(x0 + m, y0, m, m, fill=0, stroke=1)

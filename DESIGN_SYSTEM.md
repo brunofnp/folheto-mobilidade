@@ -295,9 +295,13 @@ reconstruída, letra por letra, a partir da imagem de referência).
   ficava sutil. Reescrito com a receita real: cada pétala tem seu PRÓPRIO
   centro (canto externo da própria metade, raio `m`) — como os centros
   não coincidem, as duas curvas se cruzam formando um "vale" visível no
-  meio, não uma curva lisa. `arc`, não `wedge` — só a curva, sem os raios
-  retos até o vértice (que a referência real não tem). Não precisa mais
-  da linha de costura; a forma em si já é bem diferente de D/A.
+  meio, não uma curva lisa. Cada pétala também tem um traço reto na
+  borda EXTERNA (de `base_y` até o topo) — a primeira versão desenhava só
+  a curva (`arc`, sem os raios do `wedge`), e o usuário apontou que
+  faltava esse traço reto de cada lado, comparando com a referência real
+  (que mostra as pétalas emolduradas por um retângulo completo, não só
+  as curvas soltas). Não precisa mais da linha de costura antiga; a
+  forma em si já é bem diferente de D/A.
 - **B — mesmo desenho do "B" do mosaico da capa (2026-09-22).** Pedido
   explícito do usuário: os dois sistemas (mosaico mascarado da capa,
   §5.15, e alfabeto em traço do stripe, aqui) devem desenhar B do MESMO
