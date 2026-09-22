@@ -293,6 +293,28 @@ reconstruída, letra por letra, a partir da imagem de referência).
   (0.5pt) e a rotação de 90° tornam essa diferença ainda mais sutil que na
   capa — QA visual (recorte via PyMuPDF, nunca só "gerou sem erro") pegou o
   caso antes de qualquer PDF real sair com M lendo como D.
+- **B — mesmo desenho do "B" do mosaico da capa (2026-09-22).** Pedido
+  explícito do usuário: os dois sistemas (mosaico mascarado da capa,
+  §5.15, e alfabeto em traço do stripe, aqui) devem desenhar B do MESMO
+  jeito — 2 quadrados empilhados à esquerda (espinha) + 2 meios-círculos
+  empilhados à direita, cada um com raio `m/2` (metade do módulo, mesma
+  proporção da receita `_RECEITA_GLIFO_MOSAICO["B"]`). A versão anterior
+  usava uma espinha-linha (não quadrados) e um raio quase do módulo
+  inteiro (`m*0.92`) — lia como B, mas num estilo visualmente diferente
+  do mosaico.
+- **Duas tentativas descartadas nesta mesma sessão (2026-09-22), registro
+  pra não repetir:** (1) M como "arco ogival"/pétalas duplas + E idêntico
+  a O + B/D com 1 módulo de largura — construído a partir de fotos de
+  `Folheto_Alfabeto.jpeg` (repo real do folheto-ifem, clonado
+  temporariamente pra conferir na fonte), mas quebrou a palavra (E=O
+  gerava "MOBILIDADO") e o usuário pediu revert completo ("ficou muito
+  ruim"). (2) Consequência: **nunca fazer E igual a O**, mesmo que a
+  fonte de referência sugira formas parecidas — dentro da palavra
+  "MOBILIDADE" isso cria ambiguidade real de leitura, não só uma
+  diferença estética. `M`, `E` e a largura de `D` voltaram pra versão
+  original (domo redondo + costura; grid 2×2; 2 módulos) — só `B` foi
+  ajustado de fato, com a técnica descrita acima (reaproveitar a receita
+  já aprovada do mosaico, não reinventar a partir de uma foto nova).
 - `largura_alfabeto_modular_palavra(palavra, modulo)` calcula a largura
   total sem desenhar nada — usado por `draw_capa_padrao` pra centralizar a
   palavra e escolher o `modulo` (mira ~80% da largura de conteúdo

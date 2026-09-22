@@ -1422,18 +1422,22 @@ def _glifo_o(c, x0, y0, m, cores, traco=_TRACO_MODULAR):
 
 
 def _glifo_b(c, x0, y0, m, cores, traco=_TRACO_MODULAR):
-    """'B': espinha vertical grossa + 2 meios-círculos empilhados,
-    abaulando pra direita e quase se tocando no meio (vocabulário "meio
-    círculo" do sistema modular, §1) — lido como o corpo da letra, a
-    espinha como o traço reto."""
-    c.setLineWidth(traco + 0.6)
-    c.setStrokeColor(cores[2])
-    c.line(x0, y0, x0, y0 + 2 * m)
-    r = m * 0.92
+    """'B': mesmo formato do "B" do mosaico da capa (`_RECEITA_GLIFO_
+    MOSAICO`, §5.15) — 2 quadrados empilhados à esquerda (a "espinha") +
+    2 meios-círculos empilhados à direita, cada um com raio `m/2` (metade
+    do módulo, base na aresta esquerda da própria célula), não um raio
+    quase do tamanho do módulo inteiro como a versão anterior. Pedido
+    explícito do usuário: os dois sistemas (mosaico da capa e alfabeto do
+    stripe) devem usar o mesmo desenho de B."""
     c.setLineWidth(traco)
-    for i, cy in enumerate((y0 + 1.5 * m, y0 + 0.5 * m)):
-        c.setStrokeColor(cores[i % len(cores)])
-        c.wedge(x0 - r, cy - r, x0 + r, cy + r, 270, 180, stroke=1, fill=0)
+    c.setStrokeColor(cores[0])
+    c.rect(x0, y0 + m, m, m, fill=0, stroke=1)
+    c.setStrokeColor(cores[1])
+    c.rect(x0, y0, m, m, fill=0, stroke=1)
+    r = m / 2
+    c.setStrokeColor(cores[2])
+    for cy in (y0 + 1.5 * m, y0 + 0.5 * m):
+        c.arc(x0 + m - r, cy - r, x0 + m + r, cy + r, -90, 180)
     return 2 * m
 
 

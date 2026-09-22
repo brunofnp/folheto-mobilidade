@@ -750,6 +750,31 @@ essa técnica (prova por identidade pixel a pixel contra algo já
 aprovado) é o próximo recurso, antes de tentar mais uma correção às
 cegas.
 
+**Décimo primeiro adendo (2026-09-22, mesmo dia) — M/E/B/D: uma tentativa
+revertida, uma correção mantida.** O usuário mandou 2 fotos ampliadas
+mostrando M (arco com ponta) e E (círculo com cruz) do alfabeto real do
+folheto-ifem. Clonei temporariamente `dadosfnp/folheto-ifem` (só
+leitura, no scratchpad, não versionado aqui) pra conferir
+`inspiration/Folheto_Alfabeto.jpeg` na fonte, em vez de trabalhar só a
+partir de fotos pequenas do usuário. Implementei: M com duas "pétalas"
+(quartos de círculo com vértice em cantos opostos, não o mesmo centro);
+E idêntico a O (círculo com cruz — a fonte real não tem um "E" maiúsculo
+definido, só um "e" minúsculo marcado como rejeitado); B e D reduzidos
+de 2 para 1 módulo de largura. **Quebrou a palavra**: com E=O, a última
+letra lia como "O" (usuário reportou "ficou escrito MOBILIDADO"), e
+E/B ficaram piores, não melhores. Usuário pediu revert total ("volte
+pro que era, ficou muito ruim") — `git checkout <commit-anterior> --
+CLAUDE.md DESIGN_SYSTEM.md python/core/components.py` restaurou tudo:
+M voltou ao domo redondo+costura, E ao grid 2×2, B/D a 2 módulos.
+
+Na sequência, o usuário mandou uma foto do B do MOSAICO da capa (o
+sistema mask-por-foto de `draw_mosaico_fotografico`, §5.15 — não o
+alfabeto em traço) e pediu que o B do stripe usasse **o mesmo formato**.
+Essa correção, sim, foi mantida: `_glifo_b` agora desenha 2 quadrados
+empilhados à esquerda + 2 meios-círculos de raio `m/2` à direita, mesma
+proporção de `_RECEITA_GLIFO_MOSAICO["B"]` — os dois sistemas (mosaico e
+stripe) leem B da mesma forma agora. Ver `DESIGN_SYSTEM.md` §5.14.
+
 ---
 
 ## Diretrizes de Engenharia
