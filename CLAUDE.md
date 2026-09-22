@@ -750,6 +750,32 @@ essa técnica (prova por identidade pixel a pixel contra algo já
 aprovado) é o próximo recurso, antes de tentar mais uma correção às
 cegas.
 
+**Décimo primeiro adendo (2026-09-22, mesmo dia) — glifos M e E
+corrigidos com referência real do folheto-ifem.** O usuário mandou 2
+fotos ampliadas (`Folheto_Alfabeto.jpeg` do repo real, não trazido pra
+cá — só a técnica) mostrando que:
+1. **M usa arco ogival (ponta no topo), não domo redondo.** A versão
+   antiga de `_glifo_m` usava dois quartos de círculo de raio `m` com o
+   MESMO vértice — geometricamente, as duas metades são do mesmo
+   círculo, então se encontram tangencialmente (lisas, sem ponta) no
+   topo. Reescrito com a construção clássica de "arco de dois centros"
+   (gótico): cada metade é um arco de raio `2m`, centrado no canto
+   inferior OPOSTO da zona do arco — como os centros não coincidem, os
+   arcos se cruzam formando uma ponta visível. Efeito colateral aceito:
+   o M fica mais alto (`m·√3` de arco, contra `m` antes) que as outras
+   letras — sem problema, é decoração, não grid rígido.
+2. **E usa círculo com cruz, igual ao O — não um grid 2×2 de quadrados
+   vazios.** A versão antiga era uma aproximação nossa (documentada
+   explicitamente como tal, por falta de uma 3ª linha pro travessão de
+   um E "de verdade"). `_glifo_e` foi reescrito idêntico a `_glifo_o` —
+   não é engano, o alfabeto geométrico do IFEM já repete formas entre
+   letras (é sobre o vocabulário modular, não caligrafia literal).
+
+Verificado renderizando os dois glifos isolados (não só "gerou sem
+erro") antes de regenerar os 4 PDFs — bateram com as fotos de
+referência. PDFs regenerados e republicados na release v1. Ver
+`DESIGN_SYSTEM.md` §5.14.
+
 ---
 
 ## Diretrizes de Engenharia

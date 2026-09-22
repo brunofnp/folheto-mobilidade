@@ -285,14 +285,43 @@ reconstruída, letra por letra, a partir da imagem de referência).
   desde que o stripe (§5.16) passou a reaproveitar os mesmos glifos em
   traço bem mais fino (0.5pt) — sem isso, o traço grosso da capa ficaria
   desproporcional dentro dos 20pt do stripe.
-- **M vs. D:** as duas letras usam o mesmo domo de 180° (dois quartos de
-  círculo com o mesmo vértice) — sem mais nada, ficam indistinguíveis. `M`
-  ganha uma linha reta do vértice até o topo do arco (a "costura" entre as
-  duas cristas); `D` não ganha essa linha, porque ali o domo deve ler como
-  uma curva contínua só. Achado ao construir o stripe (§5.16): o traço fino
-  (0.5pt) e a rotação de 90° tornam essa diferença ainda mais sutil que na
-  capa — QA visual (recorte via PyMuPDF, nunca só "gerou sem erro") pegou o
-  caso antes de qualquer PDF real sair com M lendo como D.
+- **M — arco ogival, não domo redondo (2026-09-22, corrigido com referência
+  real do usuário).** A primeira versão de `_glifo_m` usava o mesmo domo
+  redondo de 180° que `_glifo_d`/`_glifo_a` (dois quartos de círculo com o
+  MESMO vértice e MESMO raio `m` — geometricamente, as duas metades são
+  partes do mesmo círculo, então se encontram tangencialmente no topo,
+  sem ponta nenhuma) — só a linha de "costura" (ver histórico abaixo)
+  distinguia visualmente do D, e mesmo assim ficava sutil. O usuário
+  mandou uma foto de referência real do folheto-ifem mostrando que o M
+  usa um **arco de dois centros** (construção clássica de arco gótico):
+  cada metade é um arco de raio `2m` (não `m`) centrado no canto inferior
+  OPOSTO da zona do arco — como os centros não coincidem, os dois arcos
+  se cruzam formando uma ponta visível no topo, não uma curva lisa.
+  Consequência geométrica: a altura do arco vira `m·√3` (≈1.73m, contra
+  `m` do domo redondo) — o M agora é visivelmente mais alto que as
+  outras letras nessa região (aceitável: é decoração, não precisa de
+  grid rígido entre glifos diferentes). A linha de costura (vértice até
+  o pico) continua existindo, reforçando a divisão entre os dois lados.
+- **E — círculo com cruz, não grid 2×2 (2026-09-22, mesma correção).** A
+  primeira versão de `_glifo_e` era uma aproximação nossa (grid 2×2 de
+  quadrados vazios, sem círculo) porque a receita do mosaico (§5.15) não
+  tinha uma 3ª linha pro travessão de um E "de verdade". O usuário mandou
+  a referência real (`Folheto_Alfabeto.jpeg` do folheto-ifem) mostrando
+  que **E e O usam exatamente o mesmo desenho** (círculo inscrito, 4
+  quartos coloridos) — `_glifo_e` foi reescrito pra ser idêntico a
+  `_glifo_o`. Não é engano/duplicação: o alfabeto geométrico do IFEM já
+  repete formas entre letras diferentes (é sobre o vocabulário modular,
+  não mimetizar a caligrafia de cada letra).
+- **M vs. D, histórico:** antes da correção acima, as duas letras usavam
+  o mesmo domo de 180° (dois quartos de círculo com o mesmo vértice) —
+  sem mais nada, ficavam indistinguíveis. `M` ganhava uma linha reta do
+  vértice até o topo do arco (a "costura" entre as duas cristas); `D`
+  não ganhava essa linha. Achado ao construir o stripe (§5.16): o traço
+  fino (0.5pt) e a rotação tornavam essa diferença ainda mais sutil que
+  na capa — QA visual (recorte via PyMuPDF, nunca só "gerou sem erro")
+  pegou o caso antes de qualquer PDF real sair com M lendo como D. Com o
+  arco ogival novo, M já lê como uma forma bem diferente de D (ponta vs.
+  curva contínua), então a costura hoje é reforço, não a única diferença.
 - `largura_alfabeto_modular_palavra(palavra, modulo)` calcula a largura
   total sem desenhar nada — usado por `draw_capa_padrao` pra centralizar a
   palavra e escolher o `modulo` (mira ~80% da largura de conteúdo

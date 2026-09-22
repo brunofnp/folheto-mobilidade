@@ -5,6 +5,7 @@ Cada função recebe um `canvas` ReportLab e desenha um elemento padronizado
 (stripe, KPI, tabela, divisória de seção...). Toda primitiva visual usada
 por mais de uma página vive aqui — temas individuais não devem reimplementar.
 """
+import math
 from io import BytesIO
 from reportlab.lib.utils import simpleSplit, ImageReader
 
@@ -1389,21 +1390,33 @@ _TRACO_MODULAR = 2.2  # espessura do traço — precisa ler como logotipo, não 
 
 
 def _glifo_m(c, x0, y0, m, cores, traco=_TRACO_MODULAR):
-    """'M': dois quartos de círculo formando as duas cristas do topo (mesmo
-    vértice, no centro do bloco 2m×2m) + dois quadrados na base. Em cor
-    única (sem a alternância de cor por wedge que a capa usa), as duas
-    cristas se fundiam visualmente num arco só, liso — ficava indistinguível
-    do 'A' (reportado pelo usuário no lettermark do stripe, §5.16). A linha
-    reta do vértice até o topo do arco marca a "costura" entre as cristas
-    mesmo com as duas na mesma cor."""
-    box = (x0, y0, x0 + 2 * m, y0 + 2 * m)
+    """'M': arco OGIVAL (ponta no topo, não domo arredondado) + dois
+    quadrados na base — construção de "arco de dois centros" (gótico):
+    cada lado do arco é um arco de círculo de raio `2m` cujo centro fica
+    no canto INFERIOR OPOSTO da zona do arco (esquerda usa o centro da
+    direita, e vice-versa) — os dois arcos só se cruzam no topo porque
+    os centros não coincidem, ao contrário de um domo comum (raio `m`,
+    mesmo centro dos dois lados), que funde num arco liso só, sem ponta
+    (era assim antes; o usuário mandou uma referência real do folheto-
+    ifem mostrando a ponta e pediu a correção — DESIGN_SYSTEM.md §5.14).
+    A linha reta do vértice até o topo do arco marca a "costura" entre os
+    dois lados, mesmo em cor única."""
+    base_y = y0 + m  # linha onde o arco encontra os quadrados
+    raio = 2 * m
+    altura_pico = (raio ** 2 - m ** 2) ** 0.5  # = m*sqrt(3), pela geometria do arco de dois centros
     c.setLineWidth(traco)
     c.setStrokeColor(cores[0])
-    c.wedge(*box, 90, 90, stroke=1, fill=0)
+    # lado esquerdo do arco: centro no canto inferior direito, varre até o pico
+    ang_pico = math.degrees(math.atan2(altura_pico, -m))
+    cx, cy = x0 + 2 * m, base_y
+    c.arc(cx - raio, cy - raio, cx + raio, cy + raio, ang_pico, 180 - ang_pico)
     c.setStrokeColor(cores[1])
-    c.wedge(*box, 0, 90, stroke=1, fill=0)
+    # lado direito: centro no canto inferior esquerdo, varre do pico até a base
+    ang_pico_r = math.degrees(math.atan2(altura_pico, m))
+    cx, cy = x0, base_y
+    c.arc(cx - raio, cy - raio, cx + raio, cy + raio, 0, ang_pico_r)
     c.setStrokeColor(cores[0])
-    c.line(x0 + m, y0 + m, x0 + m, y0 + 2 * m)
+    c.line(x0 + m, base_y, x0 + m, base_y + altura_pico)
     c.setStrokeColor(cores[2])
     c.rect(x0, y0, m, m, fill=0, stroke=1)
     c.rect(x0 + m, y0, m, m, fill=0, stroke=1)
@@ -1492,17 +1505,17 @@ def _glifo_a(c, x0, y0, m, cores, traco=_TRACO_MODULAR):
 
 
 def _glifo_e(c, x0, y0, m, cores, traco=_TRACO_MODULAR):
-    """'E': espinha vertical (2 quadrados à esquerda) + topo e base à
-    direita (2 quadrados) — lê como um "C" quadrado; aproximação
-    deliberada (a grade 2×2 não tem uma terceira linha pro travessão do
-    meio de um E "de verdade")."""
+    """'E': círculo inscrito no bloco 2m×2m, em 4 quartos coloridos —
+    mesmo desenho de `_glifo_o` (referência real do folheto-ifem,
+    `Folheto_Alfabeto.jpeg`, mostra a mesma forma pras duas letras; a
+    versão anterior, um grid 2×2 de quadrados sem círculo nenhum, era uma
+    aproximação nossa, substituída depois que o usuário mandou a
+    referência de verdade — ver DESIGN_SYSTEM.md §5.14)."""
+    box = (x0, y0, x0 + 2 * m, y0 + 2 * m)
     c.setLineWidth(traco)
-    c.setStrokeColor(cores[0])
-    c.rect(x0, y0 + m, m, m, fill=0, stroke=1)
-    c.rect(x0 + m, y0 + m, m, m, fill=0, stroke=1)
-    c.setStrokeColor(cores[1])
-    c.rect(x0, y0, m, m, fill=0, stroke=1)
-    c.rect(x0 + m, y0, m, m, fill=0, stroke=1)
+    for i, ang in enumerate((0, 90, 180, 270)):
+        c.setStrokeColor(cores[i % len(cores)])
+        c.wedge(*box, ang, 90, stroke=1, fill=0)
     return 2 * m
 
 
