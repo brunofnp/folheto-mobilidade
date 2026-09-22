@@ -489,22 +489,38 @@ class FolhetoMobilidade(FolhetoFNP):
         draw_page_number(c, self.W, n, lado)
         draw_lettermark_stripe(c, self.PALAVRA_STRIPE, self.W, self.H, lado)
 
-        painel_w = CONTENT_W * 0.82
-        painel_x = (self.W - painel_w) / 2
-        painel_y = self.H * 0.42
-        draw_mosaico_decorativo(c, painel_x, painel_y, painel_w, cols=8, seed=7)
+        # Centralização considerando o stripe (20pt não é simétrico em
+        # relação a `self.W` — centralizar contra a página inteira deixava
+        # o painel visivelmente deslocado pro lado sem stripe, reportado
+        # pelo usuário). Vertical: o bloco inteiro (painel + logo + URL),
+        # não só o painel sozinho, é que fica centralizado na altura da
+        # página — antes só o painel usava uma fração fixa da altura
+        # (0.42), sobrando respiro grande demais embaixo.
+        content_x0 = STRIPE_W + MARGIN if lado == "esq" else MARGIN
+        content_x1 = self.W - MARGIN if lado == "esq" else self.W - STRIPE_W - MARGIN
+        centro_x = (content_x0 + content_x1) / 2
+
+        painel_w = min(CONTENT_W * 0.82, self.H * 0.5)
+        logo_h = 30.0
+        logo_w = logo_h * 2.6
+        gap_mosaico_logo = 46
+        gap_logo_url = 20
+        url_h = 14  # altura aproximada da linha de URL, só pra centralizar o bloco
+
+        altura_bloco = painel_w + gap_mosaico_logo + logo_h + gap_logo_url + url_h
+        painel_y = self.H / 2 + altura_bloco / 2 - painel_w
+        painel_x = centro_x - painel_w / 2
+        draw_mosaico_decorativo(c, painel_x, painel_y, painel_w)
 
         logo = ASSETS_DIR / "logos" / "fnp-logo.png"
-        logo_cy = painel_y - 46
+        logo_cy = painel_y - gap_mosaico_logo
         if logo.exists():
-            logo_h = 30.0
-            logo_w = logo_h * 2.6
-            c.drawImage(str(logo), self.W / 2 - logo_w / 2, logo_cy - logo_h / 2,
+            c.drawImage(str(logo), centro_x - logo_w / 2, logo_cy - logo_h / 2,
                         width=logo_w, height=logo_h,
                         preserveAspectRatio=True, mask="auto")
-            logo_cy -= logo_h + 14
+            logo_cy -= logo_h + gap_logo_url
 
         url = self.d.get("url", self.URL_PADRAO)
         c.setFillColor(MUTED)
         c.setFont(F(FONT_TEXTO), 9.5)
-        c.drawCentredString(self.W / 2, logo_cy - 6, url)
+        c.drawCentredString(centro_x, logo_cy - 6, url)

@@ -676,6 +676,22 @@ produção, uma sequência de correções e um problema em aberto:
    (6 páginas agora) e republicados na release `v1`. Ver
    `DESIGN_SYSTEM.md` §5.17 e §6.
 
+   **Refinado no mesmo dia, dois pedidos do usuário:** (a) "o desenho
+   está fora do padrão dos demais" — a primeira versão de
+   `draw_mosaico_decorativo` inventava cor/forma/proporção próprias
+   (paleta `_PALETA_MODULAR`, formas sorteadas), e o resultado não batia
+   com o padrão visual REAL usado em `draw_decoracao_rodape` no resto do
+   documento. Corrigido **ladrilhando o próprio asset aprovado**
+   (`assets/padroes/arte2.png`, repetido verticalmente até fechar o
+   quadrado) em vez de tentar recriar cor/forma à mão — consistência
+   exata, não aproximação. (b) "o desenho tem que ficar mais
+   centralizado em relação à página" — o painel usava uma fração fixa
+   da altura (`self.H*0.42`) e centralizava contra `self.W/2` cru
+   (ignorando o stripe de 20pt, que desloca a área de conteúdo real);
+   corrigido centralizando o BLOCO inteiro (painel + logo + URL) contra
+   a altura da página inteira, e horizontalmente contra a área de
+   conteúdo (descontando o stripe conforme `lado`), não a página bruta.
+
 ---
 
 ## Diretrizes de Engenharia

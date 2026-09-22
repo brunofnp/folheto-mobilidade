@@ -392,28 +392,38 @@ vetorial girado em tempo de execução, sem asset raster nenhum).
   palavra ou omitiria o parâmetro.
 
 ### 5.17 Painel decorativo (`draw_mosaico_decorativo` — NOVO, página de encerramento)
-Grade quadrada de formas do vocabulário modular (quadrado cheio, quarto de
-círculo, meio-círculo) como **contorno colorido puro** — sem máscara de
-foto nenhuma, ao contrário de `draw_mosaico_fotografico` (§5.15). Pedido
+Painel quadrado pra página de encerramento (§6, página 6). Pedido
 explícito do usuário, com uma imagem de referência (painel do
 folheto-ifem: mosaico modular + logo FNP + URL, sem dado nenhum).
 
-- Reaproveita o mesmo par de dicionários de forma por célula
-  (`cantos_quarto`/`arestas_meio`) que `draw_mosaico_fotografico` já usava
-  — extraído para uma função compartilhada, `_vocabulario_celula(cell)`,
-  em vez de duplicar as duas versões (uma pra cada função). Cor cíclica
-  entre as células a partir de `_PALETA_MODULAR` (mesma paleta do
-  alfabeto modular e do rodapé decorativo, §5.13/5.14) — lê como o mesmo
-  sistema visual, não uma paleta nova.
+**Primeira versão gerava formas aleatórias com paleta própria —
+descartada.** O usuário comparou com a referência e apontou que o
+resultado ficava "fora do padrão dos demais": cor/proporção/densidade
+inventadas não batiam com o padrão visual REAL já em uso no resto do
+documento. A versão final não tenta recriar o padrão à mão — **ladrilha
+o próprio asset já existente e aprovado**, `assets/padroes/arte2.png`
+(o mesmo que `draw_decoracao_rodape`, §5.13, usa no rodapé de outras
+páginas), repetido verticalmente (sempre na largura `w`, recortando o
+excesso da última repetição) até preencher o quadrado. Garante
+consistência visual exata com o resto do documento — não uma
+aproximação que pode divergir em cor ou proporção.
+
+- Sem parâmetro de cor/forma/seed — não há mais nada pra "sortear", o
+  conteúdo vem inteiro do PNG. Só `arte` (padrão `"arte2"`) escolhe qual
+  dos 3 padrões ladrilhar, caso um dia se queira outro.
 - Sempre uma grade quadrada (`w`×`w`) — `w` também é o retorno da função,
   útil pra empilhar o logo/URL logo abaixo sem recalcular a altura.
-- `seed` fixo (padrão 7) garante que o painel sai igual em toda geração
-  (mesma filosofia do mosaico fotográfico) — não é decoração "toda vez
-  diferente".
-- Usado só na página de encerramento (§6, página 6) — `_pag_encerramento_
-  decorativo` em `mobilidade.py`, sem header/footer/eyebrow (a página de
-  referência não tem nenhum texto de seção), só stripe, número de página
-  e lettermark, mesmo padrão do resto do folheto.
+- Sem asset (`arte2.png` ausente): não desenha nada — mesma degradação
+  silenciosa de `draw_decoracao_rodape`.
+- Usado só na página de encerramento — `_pag_encerramento_decorativo` em
+  `mobilidade.py`, sem header/footer/eyebrow (a referência não tem nenhum
+  texto de seção), só stripe, número de página e lettermark, mesmo padrão
+  do resto do folheto. Painel + logo + URL são centralizados como **um
+  bloco só** contra a altura da página inteira, e horizontalmente contra
+  a área de conteúdo real (descontando o stripe, não `self.W/2` cru) —
+  centralizar só o painel sozinho contra uma fração fixa da altura, ou
+  contra a largura total da página, deixava o conjunto visualmente
+  descentralizado (reportado pelo usuário).
 
 ---
 
