@@ -1064,16 +1064,24 @@ def draw_percentual_bar(c, pct: float, rotulo: str, x: float, y: float,
 
 def draw_donut_chart(c, segmentos: list[dict], cx: float, cy: float,
                      raio: float, raio_interno: float | None = None,
-                     legenda_x: float | None = None, legenda_y: float | None = None) -> float:
+                     legenda_x: float | None = None,
+                     legenda_font_size: float = 11) -> float:
     """Donut chart genérico. `segmentos`: [{"label", "valor", "cor"}, ...].
     Fatias proporcionais ao valor, começando no topo (12h), sentido
     horário — furo central (`raio_interno`, default 55% do raio) em
     branco. Técnica: path poligonal aproximando o arco (sem depender de
     lib de gráfico externa), mesma usada no folheto-ifem.
 
-    Se `legenda_x`/`legenda_y` forem passados, desenha uma legenda (uma
-    linha por segmento: quadradinho + rótulo + %) a partir dali. Sem
-    segmentos com valor (todos None/zero), não desenha nada e retorna
+    Se `legenda_x` for passado, desenha uma legenda (uma linha por
+    segmento: quadradinho + rótulo + %) SEMPRE centralizada verticalmente
+    em `cy` (o próprio centro do donut); não recebe mais um `legenda_y`
+    explícito: pedido do usuário pra alinhar a legenda ao meio do gráfico,
+    não ao topo (era `legenda_y` fixo, alinhado com o eyebrow acima).
+    `legenda_font_size` controla o tamanho da legenda inteira (rótulo,
+    percentual e quadradinho de cor, todos proporcionais); default subiu
+    de 9 pra 11 (pedido do usuário, "aumentei a legenda").
+
+    Sem segmentos com valor (todos None/zero), não desenha nada e retorna
     `cy - raio` — degradação silenciosa, é um elemento complementar, não
     a informação principal da página."""
     import math
@@ -1105,20 +1113,23 @@ def draw_donut_chart(c, segmentos: list[dict], cx: float, cy: float,
         c.setFillColor(WHITE)
         c.circle(cx, cy, raio_int, fill=1, stroke=0)
 
-    if legenda_x is not None and legenda_y is not None:
-        ly = legenda_y
+    if legenda_x is not None:
+        row_h = legenda_font_size * 2.0
+        swatch = legenda_font_size + 1
+        ly = cy + (len(validos) - 1) * row_h / 2
         for seg in validos:
             pct = seg["valor"] / total * 100
             c.setFillColor(seg.get("cor", BLUE))
-            c.rect(legenda_x, ly - 1, 8, 8, fill=1, stroke=0)
+            c.rect(legenda_x, ly - 1, swatch, swatch, fill=1, stroke=0)
             c.setFillColor(INK)
-            c.setFont(F(FONT_TEXTO_SEMIBOLD), 9)
-            c.drawString(legenda_x + 13, ly, seg["label"])
+            c.setFont(F(FONT_TEXTO_SEMIBOLD), legenda_font_size)
+            c.drawString(legenda_x + swatch + 6, ly, seg["label"])
             c.setFillColor(MUTED)
-            c.setFont(F(FONT_TEXTO), 9)
-            c.drawString(legenda_x + 13 + c.stringWidth(seg["label"], F(FONT_TEXTO_SEMIBOLD), 9) + 6,
-                        ly, f"{pct:.0f}%")
-            ly -= 16
+            c.setFont(F(FONT_TEXTO), legenda_font_size)
+            c.drawString(
+                legenda_x + swatch + 6 + c.stringWidth(seg["label"], F(FONT_TEXTO_SEMIBOLD), legenda_font_size) + 6,
+                ly, f"{pct:.0f}%")
+            ly -= row_h
 
     return cy - raio
 

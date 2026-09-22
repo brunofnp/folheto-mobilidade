@@ -495,8 +495,19 @@ limite de páginas mais").** A regra original (registrada em `CLAUDE.md`,
 Decisão 5) segue valendo pro CONTEÚDO de dado (nenhuma página de
 divisória, cabeçalho de seção dentro da própria página, pares
 tabela+gráfico fundidos) — só deixou de ser um teto rígido de contagem.
-A 6ª página (encerramento decorativo) foi uma ADIÇÃO pura, não reabre a
-fusão das páginas 2–5.
+As páginas 06 e 07 foram ADIÇÕES puras, não reabrem a fusão das páginas
+2–5.
+
+**Página 06 acrescentada em 2026-09-22** a partir do rascunho original do
+briefing (`Rascunho rel seg. viaria.pdf`, mandado pelo usuário), cruzado
+com o que já estava implementado nas páginas 2–5 e com o JSON real de
+Campinas/Montes Claros: quase todo o rascunho já tinha página (mortes,
+internações, ranking de causas); o único dado REAL e ainda não usado era
+`area_km2` (existe no JSON, nunca aparecia) e o detalhamento completo de
+`frota.evolucao_pct` (4 períodos × 3 categorias, antes só o total
+2003–2025 aparecia, como 1 KPI na página 2). Custo hospitalar e mapa por
+bairro ficaram de fora: o rascunho só tem perguntas em aberto ali, nenhum
+número real, e nunca se inventa dado pra preencher uma seção.
 
 | Pág. | Função                                        | Stripe | Status |
 |------|------------------------------------------------|--------|--------|
@@ -504,8 +515,9 @@ fusão das páginas 2–5.
 | 02   | "Por que importa" + KPIs + tabela de mortalidade 2024 + barra percentual | esq | ✅ implementada |
 | 03   | Série histórica de mortes + donut por modo + ranking de causas de morte | dir | ✅ implementada (aceita `null`) |
 | 04   | Tabela de internações + série histórica de internações (gestão hachurada) | esq | ✅ implementada (aceita `null`) |
-| 05   | Metodologia (passos numerados) + "leitos de UTI" + QR compacto | dir | ✅ implementada |
-| 06   | Encerramento decorativo (painel modular + logo + URL, sem dado) | alterna | ✅ implementada (§5.17) |
+| 05   | Perfil da cidade: população/área/densidade + evolução completa da frota (tabela 4×3) + donut de composição atual | dir | ✅ implementada |
+| 06   | Metodologia (passos numerados) + "leitos de UTI" + QR compacto | esq | ✅ implementada |
+| 07   | Encerramento decorativo (painel modular + logo + URL, sem dado) | alterna | ✅ implementada (§5.17) |
 | —    | Custo por hospital, por modo                   | —      | ❌ pendente de dado (ver CLAUDE.md) |
 | —    | Mapa de internações por bairro (RM)            | —      | ❌ pendente de dado + componente novo |
 

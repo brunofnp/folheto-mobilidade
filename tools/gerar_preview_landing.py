@@ -11,7 +11,7 @@ CLAUDE.md "Recalibrar espaçamento").
 
 Uso:
     python tools/gerar_preview_landing.py
-    python tools/gerar_preview_landing.py --municipio campinas --paginas 1,4,5
+    python tools/gerar_preview_landing.py --municipio campinas --paginas 1,2,3
 """
 import argparse
 import io
@@ -41,8 +41,12 @@ SLUG_PADRAO = "campinas"
 
 # Capa, taxa de mortalidade (a tabela que resume o diagnóstico) e evolução
 # das mortes (o gráfico de linha) — mesmo espírito da escolha do folheto-ifem
-# (capa + página de dado central + página de gráfico).
-PAGINAS_PADRAO = "1,4,5"
+# (capa + página de dado central + página de gráfico). Eram as páginas
+# "1,4,5" antes de 2026-09-22: a página de perfil da cidade/frota entrou
+# antes da metodologia, empurrando todo mundo: a tabela de mortalidade e
+# o gráfico de evolução, que sempre foram a 2ª e a 3ª página de conteúdo,
+# viraram literalmente as páginas 2 e 3 (não 4 e 5) do PDF.
+PAGINAS_PADRAO = "1,2,3"
 
 # draw_capa_padrao (components.py) desenha o título na faixa inferior (27% da
 # altura, a partir de y=0 no sistema de coordenadas do PDF) — que corresponde
@@ -76,7 +80,7 @@ def _nome_pdf(slug: str) -> Path:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Gera JPEGs de prévia para o site estático")
     ap.add_argument("--municipio", default=SLUG_PADRAO, help="slug em data/mobilidade/ (ex.: campinas)")
-    ap.add_argument("--paginas", default=PAGINAS_PADRAO, help="ex.: 1,4,5")
+    ap.add_argument("--paginas", default=PAGINAS_PADRAO, help="ex.: 1,2,3")
     args = ap.parse_args()
 
     pdf_path = _nome_pdf(args.municipio)

@@ -47,13 +47,27 @@
 > limite de páginas mais"): 6ª página acrescentada, só decorativa
 > (painel modular + logo FNP + URL, sem dado nenhum), a pedido do
 > usuário com imagem de referência do folheto-ifem. Ver Decisão 5,
-> oitavo adendo, item 2, e `DESIGN_SYSTEM.md` §5.17/§6. **Espelhamento
-> do lettermark do stripe: ainda SEM confirmação do usuário** — a
-> correção anterior (`scale(1,-1)`) foi confirmada matematicamente E
-> empiricamente como um no-op visual pro alfabeto atual; uma página de
-> comparação com 5 variantes foi publicada (Artifact) esperando o
-> usuário escolher qual bate com a referência dele. Ver Decisão 5,
-> oitavo adendo, item 1 — não presumir resolvido.
+> oitavo adendo, item 2, e `DESIGN_SYSTEM.md` §5.17/§6. **Espelhamento do
+> lettermark do stripe: resolvido no mesmo dia**, não era espelhamento,
+> era o SENTIDO do giro (`rotate(90)`, não `rotate(-90)`); confirmado
+> pelo usuário no PDF real ("Agora ficou correto"). Ver Decisão 5, décimo
+> adendo.
+>
+> Atualizado em 2026-09-22 (mesmo dia, mais tarde), **7ª página
+> acrescentada**: "Perfil da cidade" (população, área, densidade
+> demográfica + evolução completa da frota, 4 períodos × 3 categorias +
+> donut de composição atual), inserida como página 6 (a decorativa vira
+> 7ª). O usuário mandou o rascunho original do briefing
+> (`Rascunho rel seg. viaria.pdf`) pra eu cruzar com o que já estava nas
+> páginas 2 a 5: quase tudo já tinha página; só `area_km2` e o
+> detalhamento completo de `frota.evolucao_pct` eram dado real e nunca
+> mostrado (antes só 1 KPI com o total 2003 a 2025 aparecia). Custo
+> hospitalar e mapa por bairro continuam de fora: o rascunho só tem
+> perguntas em aberto ali, nenhum número real. Ver `DESIGN_SYSTEM.md` §6
+> e `python/temas/mobilidade.py::_pag_perfil_frota`. **Ordem trocada no
+> mesmo dia, a pedido do usuário**: perfil da cidade/frota é a página 5
+> agora (stripe `dir`), metodologia virou a 6ª (stripe `esq`); a
+> decorativa continua sendo a última, 7ª.
 
 ---
 

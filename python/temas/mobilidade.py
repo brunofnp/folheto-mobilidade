@@ -5,14 +5,17 @@ Público-alvo do folheto: cidades acima de 80 mil habitantes. Conteúdo
 derivado do documento de briefing do projeto (mortes, internações, custo
 hospitalar, ranking de causas de morte, evolução da frota).
 
-**5 páginas, teto fixo** (decidido em 2026-09-21) — sem página de divisória
-dedicada só a título de capítulo; o cabeçalho de seção vive dentro da
-própria página de conteúdo, mesmo padrão de densidade do folheto-ifem (ver
-CLAUDE.md, Decisão 4, e DESIGN_SYSTEM.md §6).
+**7 páginas** (teto de 5 páginas da Decisão 5 revisto em 2026-09-22, "não
+temos limite de páginas mais"), sem página de divisória dedicada só a
+título de capítulo; o cabeçalho de seção vive dentro da própria página de
+conteúdo, mesmo padrão de densidade do folheto-ifem (ver CLAUDE.md,
+Decisão 4/5, e DESIGN_SYSTEM.md §6).
 
 Estado desta versão (ver CLAUDE.md "Pendências"):
-  - Frota, mortalidade, série histórica de mortes, internações e ranking de
-    causas: implementados, com dado real para os 2 pilotos.
+  - Frota (inclusive detalhamento completo por período/categoria, página
+    6), mortalidade, série histórica de mortes, internações, ranking de
+    causas, população e área: implementados, com dado real para os 2
+    pilotos.
   - Custo por hospital e mapa de internações por bairro: NÃO implementados
     ainda — dependem de dado que ainda não existe (ver SCHEMA.md).
 
@@ -60,6 +63,12 @@ def _fmt_int(v) -> str:
     return f"{v:,.0f}".replace(",", ".")
 
 
+def _fmt_dec1(v) -> str:
+    if v is None:
+        return "n/d"
+    return f"{v:,.1f}".replace(",", "@").replace(".", ",").replace("@", ".")
+
+
 class FolhetoMobilidade(FolhetoFNP):
     titulo_publicacao = "SEGURANÇA VIÁRIA · DIAGNÓSTICO PRELIMINAR FNP"
 
@@ -81,6 +90,7 @@ class FolhetoMobilidade(FolhetoFNP):
             self._pag_problema_mortalidade,
             self._pag_serie_mortes_causas,
             self._pag_internacoes,
+            self._pag_perfil_frota,
             self._pag_metodologia_encerramento,
             self._pag_encerramento_decorativo,
         ]
@@ -301,12 +311,19 @@ class FolhetoMobilidade(FolhetoFNP):
                     })
         if segmentos:
             draw_eyebrow(c, f"DISTRIBUIÇÃO POR MODO · {ultimo_ano}", x, y, color=BLUE)
-            donut_cy = y - 16 - 44
+            # Raio aumentado de 44 pra 60 (pedido do usuário: "aumentar o
+            # tamanho dos dois gráficos rosquinha pra ocupar melhor o
+            # espaço"); cx/legenda_x derivados do raio, não mais valores
+            # fixos, pra continuar proporcional se o raio mudar de novo.
+            # Gap donut->legenda alargado de 28 pra 56 e a legenda
+            # centralizada em `cy` (não mais no topo) a pedido do usuário.
+            raio = 60
+            donut_cy = y - 16 - raio
             draw_donut_chart(
-                c, segmentos, x + 48, donut_cy, raio=44,
-                legenda_x=x + 120, legenda_y=y - 24,
+                c, segmentos, x + raio + 4, donut_cy, raio=raio,
+                legenda_x=x + raio * 2 + 56,
             )
-            y = donut_cy - 44 - 24
+            y = donut_cy - raio - 24
 
         # Ranking de causas de morte -------------------------------------------
         self._avisar_se_ausente("ranking_causas_morte", "Ranking de causas de morte")
@@ -412,11 +429,11 @@ class FolhetoMobilidade(FolhetoFNP):
 
         draw_decoracao_rodape(c, "esq", y, forcar_fina=True)
 
-    # ─── Página 5: Metodologia + encerramento/QR ─────────────────────────────
+    # ─── Página 6: Metodologia + encerramento/QR ─────────────────────────────
 
     def _pag_metodologia_encerramento(self, c, n):
         x, y = self._topo_pagina(
-            c, n, "dir", "METODOLOGIA", "DE ONDE VÊM OS DADOS",
+            c, n, "esq", "METODOLOGIA", "DE ONDE VÊM OS DADOS",
             "Fontes, tratamento\ne o que fazer com isso",
         )
         passos = (self.d.get("metodologia") or {}).get("passos") or [
@@ -467,19 +484,133 @@ class FolhetoMobilidade(FolhetoFNP):
         # Rodapé decorativo só abaixo da coluna MAIS CURTA das duas (texto x
         # QR) — nunca sobrepor o card de QR, que também pode terminar mais
         # baixo que o texto dependendo do tamanho da nota dos leitos de UTI.
-        draw_decoracao_rodape(c, "dir", min(y, y_qr), forcar_fina=True)
+        draw_decoracao_rodape(c, "esq", min(y, y_qr), forcar_fina=True)
 
-    # ─── Página 6: Encerramento decorativo ────────────────────────────────────
+    # ─── Página 5: Perfil da cidade (área + frota completa) ──────────────────
+    # Acrescentada em 2026-09-22 a pedido do usuário, que mandou o rascunho
+    # original do briefing (`Rascunho rel seg. viaria.pdf`) pra eu cruzar
+    # com o que já está nas páginas 2-5 e no JSON real de Campinas/Montes
+    # Claros. Quase todo o rascunho já tinha página: só sobrou dado REAL e
+    # nunca mostrado, `area_km2` (existe no JSON, nunca usado) e o
+    # detalhamento completo de `frota.evolucao_pct` (4 períodos × 3
+    # categorias, hoje só o total 2003-2025 aparece, como 1 KPI na página
+    # 2). Custo hospitalar e mapa por bairro NÃO entraram aqui: o rascunho
+    # só tem perguntas em aberto pra eles, nenhum número real (ver
+    # CLAUDE.md, Pendências); nunca se inventa dado pra preencher uma seção.
+
+    def _pag_perfil_frota(self, c, n):
+        self._avisar_se_ausente("frota", "Perfil da frota")
+        x, y = self._topo_pagina(
+            c, n, "dir", "PERFIL DA CIDADE", "POPULAÇÃO, ÁREA E FROTA",
+            "Quem mora aqui e\ncomo se desloca",
+        )
+        draw_body(
+            c,
+            "Quanto mais motorizada e mais densa a cidade, maior a exposição "
+            "de pedestres, ciclistas e motociclistas ao risco de sinistro. "
+            "Estes números dão o contexto para as taxas de mortalidade e "
+            "internação das páginas anteriores.",
+            x, y, CONTENT_W, size=9.5,
+        )
+        y -= 60
+
+        pop = (self.d.get("populacao") or {}).get("valor")
+        area = self.d.get("area_km2")
+        densidade = (pop / area) if (pop and area) else None
+        frota = self.d.get("frota") or {}
+        frota_total = (frota.get("atual") or {}).get("total")
+
+        cards = [
+            ("População", _fmt_int(pop), "hab."),
+            ("Área", _fmt_dec1(area), "km²"),
+            ("Densidade demográfica", _fmt_dec1(densidade), "hab./km²"),
+            ("Frota cadastrada", _fmt_int(frota_total), "veículos"),
+        ]
+        card_w = (CONTENT_W - 12) / 2
+        card_h = 54
+        gap_v = 10
+        for i, (label, valor, unidade) in enumerate(cards):
+            col, row = i % 2, i // 2
+            cx = x + col * (card_w + 12)
+            cy = y - 46 - row * (card_h + gap_v)
+            draw_kpi_box(c, label, valor, unidade, cx, cy, w=card_w, h=card_h)
+        y -= 46 + 2 * (card_h + gap_v) + 24
+
+        # Evolução da frota, por período e por categoria ------------------------
+        draw_eyebrow(c, "EVOLUÇÃO DA FROTA CADASTRADA", x, y, color=BLUE)
+        y -= 16
+        draw_body(
+            c,
+            "Crescimento acumulado do número de veículos cadastrados, por "
+            "período. Fonte: Registro Nacional de Veículos Automotores "
+            "(RENAVAM/DENATRAN). Elaboração: FNP.",
+            x, y, CONTENT_W, size=9,
+        )
+        y -= 26
+
+        evolucao = frota.get("evolucao_pct") or {}
+        periodos = [
+            ("2003_2010", "2003–2010"),
+            ("2011_2020", "2011–2020"),
+            ("2021_2025", "2021–2025"),
+            ("2003_2025", "2003–2025"),
+        ]
+        categorias = [
+            ("total", "Frota total"),
+            ("automoveis", "Automóveis"),
+            ("motocicletas", "Motocicletas"),
+        ]
+        headers = ["CATEGORIA"] + [label for _, label in periodos]
+        col_w = [CONTENT_W * w for w in (0.28, 0.18, 0.18, 0.18, 0.18)]
+        rows = []
+        for chave_cat, label_cat in categorias:
+            linha = [label_cat]
+            for chave_per, _ in periodos:
+                linha.append(_fmt_pct((evolucao.get(chave_per) or {}).get(chave_cat)))
+            rows.append(linha)
+        draw_table(c, headers, rows, col_w, x, y, highlight_col=4)
+        y -= len(rows) * 18 + 36
+
+        # Composição da frota atual (donut) --------------------------------------
+        atual = frota.get("atual") or {}
+        automoveis = atual.get("automoveis")
+        motocicletas = atual.get("motocicletas")
+        outros = None
+        if frota_total is not None and automoveis is not None and motocicletas is not None:
+            outros = max(0, frota_total - automoveis - motocicletas)
+        segmentos = [
+            {"label": "Automóveis", "valor": automoveis, "cor": BLUE_DARK},
+            {"label": "Motocicletas", "valor": motocicletas, "cor": RED_BURNT},
+            {"label": "Outros (caminhões, ônibus etc.)", "valor": outros, "cor": MUTED},
+        ]
+        if any(s["valor"] for s in segmentos):
+            draw_eyebrow(c, "COMPOSIÇÃO DA FROTA ATUAL", x, y, color=BLUE)
+            # Mesmo raio e legenda centralizada de _pag_serie_mortes_causas
+            # (60, não mais 44); pedido do usuário pra aumentar os dois
+            # donuts do folheto do mesmo jeito.
+            raio = 60
+            donut_cy = y - 16 - raio
+            draw_donut_chart(
+                c, segmentos, x + raio + 4, donut_cy, raio=raio,
+                legenda_x=x + raio * 2 + 56,
+            )
+            y = donut_cy - raio - 24
+
+        draw_decoracao_rodape(c, "dir", y, forcar_fina=True)
+
+    # ─── Página 7: Encerramento decorativo ────────────────────────────────────
 
     def _pag_encerramento_decorativo(self, c, n):
         """Página só decorativa (painel modular + logo + URL), sem
         conteúdo de dado — pedido explícito do usuário em 2026-09-21, com
         uma imagem de referência (painel do folheto-ifem: mosaico de
         formas do sistema modular, sem foto, + logo FNP + URL abaixo).
-        Acrescentada como página nova (6ª); o teto de 5 páginas da Decisão
-        5 foi revisto pelo usuário no mesmo pedido ("não temos limite de
-        páginas mais") — não remover conteúdo de nenhuma página existente
-        por causa desta, é adição pura. Sem header/footer/eyebrow (a
+        Acrescentada como página nova (6ª, depois virou 7ª quando a página
+        de perfil da cidade/frota entrou antes dela em 2026-09-22); o teto
+        de 5 páginas da Decisão 5 foi revisto pelo usuário no pedido
+        original ("não temos limite de páginas mais"); não remover
+        conteúdo de nenhuma página existente por causa desta, é adição
+        pura. Sem header/footer/eyebrow (a
         referência não tem nenhum texto de seção) — só stripe, número de
         página e o lettermark, mesmo padrão do resto do folheto."""
         lado = "dir" if n % 2 else "esq"
