@@ -23,7 +23,7 @@ body {
   background: #FFFFFF;
   color: var(--tinta);
   margin: 0;
-  padding: 0 0 4rem;
+  padding: 0;
 }
 
 main { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
@@ -35,3 +35,56 @@ h2 { font-size: 1.3rem; margin-top: 2.2rem; border-bottom: 2px solid var(--regua
 /* Prévia: recorte quadrado gerado por tools/gerar_preview_landing.py —
    reservado antes da imagem carregar, pra página não pular durante o load. */
 .preview-fig { aspect-ratio: 1 / 1; }
+
+/* Rodapé: mesmo markup/CSS de docs/index.html (site público), pedido
+   explícito do usuário: as duas telas (back-office interno e site
+   público) devem ser visualmente o mesmo sistema, não duas experiências
+   diferentes (2026-09-22). Cor fixa em hex, não var(--azul-escuro): é a
+   MESMA cor da onda logo acima, os dois precisam bater exatamente,
+   igual no site público. */
+.site-footer-wave { line-height: 0; display: block; margin-top: 3rem; }
+.site-footer-wave svg { display: block; width: 100%; height: 50px; }
+.site-footer { background-color: #101d4f; }
+.site-footer-inner {
+  max-width: 960px; margin: 0 auto;
+  padding: 8px 24px 4px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+.site-footer-col h3 {
+  font-size: 1.05rem; font-weight: 900; color: rgba(255,255,255,.90);
+  margin: 0 0 8px; border: none; padding: 0;
+}
+.site-footer-col p {
+  font-size: 0.8125rem; color: rgba(255,255,255,.65); line-height: 1.5; margin: 0 0 4px;
+}
+.site-footer-col a { color: inherit; text-decoration: none; }
+.site-footer-fone {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px;
+  font-size: 0.8125rem; color: rgba(255,255,255,.65);
+}
+.site-footer-fone svg { width: 14px; height: 14px; flex-shrink: 0; }
+.site-footer-sep { color: rgba(255,255,255,.35); }
+.site-footer-col-right { display: flex; flex-direction: column; gap: 10px; }
+.site-footer-social { display: flex; align-items: center; gap: 6px; }
+.site-footer-social .site-footer-social-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #ffffff; transition: opacity .15s;
+}
+.site-footer-social .site-footer-social-icon:hover { opacity: .8; }
+.site-footer-social-icon svg { width: 18px; height: 18px; }
+.site-footer-logo {
+  height: 34px; width: auto; object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+.site-footer-bottom {
+  border-top: 1px solid rgba(255,255,255,.10);
+  padding: 12px 24px 18px; margin-top: 20px;
+}
+.site-footer-bottom-inner { max-width: 960px; margin: 0 auto; text-align: center; }
+.site-footer-copy { font-size: 0.75rem; color: rgba(255,255,255,.55); margin: 0; }
+@media (min-width: 768px) {
+  .site-footer-inner { flex-direction: row; justify-content: space-between; align-items: flex-end; }
+  .site-footer-col-right { align-items: flex-end; }
+  .site-footer-col-right h3, .site-footer-col-right p { text-align: right; }
+}

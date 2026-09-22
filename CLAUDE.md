@@ -289,19 +289,17 @@ usuário depois que ficou claro que nada parecido existia neste repo ainda
    os cards (não por município), guardado em `localStorage` — a escolha é
    lembrada na próxima visita.
 2. **Implementado**: um site estático de distribuição pública
-   (`docs/index.html` + GitHub Pages + PDFs hospedados em GitHub Release),
-   réplica adaptada de `docs/` do folheto-ifem — sem Django, sem servidor,
-   sem banco. `tools/build_site.py` gera `docs/folhetos.json` a partir de
-   `data/mobilidade/*.json`, **excluindo sempre `exemplo_fortaleza.json`**
-   (nunca dado publicável) e qualquer município sem PDF em `output/`.
-   `tools/publicar_release.ps1` sobe os PDFs como assets de uma GitHub
-   Release no repo `production` (`dadosfnp/folheto-mobilidade`, nunca no
-   fork pessoal). O índice já mostra os 2 pilotos reais (ver "Marco: dados
-   reais" nas Pendências) — falta só publicar a Release de verdade no
-   GitHub pra a URL do "Baixar PDF" resolver. **Passo manual pendente, fora
-   do alcance de código**: habilitar GitHub Pages em
-   `dadosfnp/folheto-mobilidade` (Settings → Pages → branch `main`, pasta
-   `/docs`) antes do primeiro merge para lá ter efeito público.
+   (`docs/index.html` + GitHub Pages), réplica adaptada de `docs/` do
+   folheto-ifem, sem Django, sem servidor, sem banco. `tools/build_site.py`
+   gera `docs/folhetos.json` a partir de `data/mobilidade/*.json`,
+   **excluindo sempre `exemplo_fortaleza.json`** (nunca dado publicável) e
+   qualquer município sem PDF em `output/`. GitHub Pages está no ar em
+   `https://dadosfnp.github.io/folheto-mobilidade/` (habilitado
+   manualmente por um admin do org, `Settings → Pages → branch main, pasta
+   /docs`).
+
+   **PDFs hospedados em `docs/pdfs/` (versionados no git), não mais em
+   GitHub Release, revisado em 2026-09-22, ver adendo abaixo.**
 
 **Identidade visual (2026-09-18, a pedido explícito do usuário):** as duas
 telas — `docs/index.html` (site público) e o back-office Django

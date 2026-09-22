@@ -1,16 +1,13 @@
 {
   "total": 2,
-  "release_tag": "v1",
-  "owner": "dadosfnp",
-  "repo": "folheto-mobilidade",
-  "atualizado": "2026-09-22T16:49:06Z",
+  "atualizado": "2026-09-22T16:59:14Z",
   "municipios": [
     {
       "municipio": "Campinas",
       "uf": "SP",
       "populacao": 1187974,
       "taxa_mortalidade_total": 13.7,
-      "pdf": "https://github.com/dadosfnp/folheto-mobilidade/releases/download/v1/FolhetoMobilidade_Campinas_SP.pdf",
+      "pdf": "pdfs/FolhetoMobilidade_Campinas_SP.pdf",
       "pdf_filename": "FolhetoMobilidade_Campinas_SP.pdf"
     },
     {
@@ -18,7 +15,7 @@
       "uf": "MG",
       "populacao": 437601,
       "taxa_mortalidade_total": 20.3,
-      "pdf": "https://github.com/dadosfnp/folheto-mobilidade/releases/download/v1/FolhetoMobilidade_Montes_Claros_MG.pdf",
+      "pdf": "pdfs/FolhetoMobilidade_Montes_Claros_MG.pdf",
       "pdf_filename": "FolhetoMobilidade_Montes_Claros_MG.pdf"
     }
   ]

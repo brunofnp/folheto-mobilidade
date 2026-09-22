@@ -4,6 +4,16 @@
     organização (repo `production`, ver CLAUDE.md — nunca no fork pessoal).
 
 .DESCRIPTION
+    **Não é mais o caminho que o site público (`docs/`) usa pra servir os
+    PDFs** (revisto em 2026-09-22, ver CLAUDE.md Decisão 4): o link de
+    Release sempre força download (`Content-Disposition: attachment`, sem
+    CORS), o que impedia um botão "Preview" de verdade; `tools/build_site.py`
+    agora copia os PDFs direto pra `docs/pdfs/`, versionados no git. Este
+    script continua existindo como um jeito opcional de ter uma cópia
+    versionada/com link direto fora do site (arquivo histórico, ex.: pra
+    linkar de um e-mail), mas não é mais um passo obrigatório do fluxo de
+    publicação.
+
     Versão simplificada da equivalente no folheto-ifem: aquele script lida
     com centenas de PDFs (lotes, retomada, limite de linha de comando do
     Windows). Aqui são só os pilotos (Campinas, Montes Claros) — sem essa
