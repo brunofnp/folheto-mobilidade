@@ -74,6 +74,12 @@ class FolhetoMobilidade(FolhetoFNP):
     # pré-rotacionado; aqui é vetor puro, ver components.py::
     # draw_lettermark_stripe e DESIGN_SYSTEM.md §5.16).
     PALAVRA_STRIPE = "MOBILIDADE"
+    # Mesma fração usada por `faixa_h` na capa (`draw_capa_padrao`) —
+    # todas as páginas usam esse `y_min`, não só a capa, pra a palavra
+    # ficar na MESMA posição vertical (perto do número de página) em
+    # toda página, não centralizada na altura inteira (posição pedida
+    # explicitamente pelo usuário, com a capa como referência visual).
+    FRACAO_Y_MIN_LETTERMARK = 0.27
 
     def construir_paginas(self):
         return [
@@ -103,7 +109,8 @@ class FolhetoMobilidade(FolhetoFNP):
 
         draw_stripe(c, self.W, self.H, lado)
         draw_page_number(c, self.W, n, lado)
-        draw_lettermark_stripe(c, self.PALAVRA_STRIPE, self.W, self.H, lado)
+        draw_lettermark_stripe(c, self.PALAVRA_STRIPE, self.W, self.H, lado,
+                               y_min=self.H * self.FRACAO_Y_MIN_LETTERMARK)
         draw_header(c, self.H, self.titulo_publicacao)
         draw_footer(c, self.W, label_secao)
 
@@ -487,7 +494,8 @@ class FolhetoMobilidade(FolhetoFNP):
         c.rect(0, 0, self.W, self.H, fill=1, stroke=0)
         draw_stripe(c, self.W, self.H, lado)
         draw_page_number(c, self.W, n, lado)
-        draw_lettermark_stripe(c, self.PALAVRA_STRIPE, self.W, self.H, lado)
+        draw_lettermark_stripe(c, self.PALAVRA_STRIPE, self.W, self.H, lado,
+                               y_min=self.H * self.FRACAO_Y_MIN_LETTERMARK)
 
         # Centralização considerando o stripe (20pt não é simétrico em
         # relação a `self.W` — centralizar contra a página inteira deixava

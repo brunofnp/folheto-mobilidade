@@ -390,6 +390,16 @@ vetorial girado em tempo de execução, sem asset raster nenhum).
   também do fim de `draw_capa_padrao` (capa) — `PALAVRA_STRIPE = "MOBILIDADE"`
   é constante do tema, não do núcleo; um tema novo passaria a própria
   palavra ou omitiria o parâmetro.
+- **`y_min` é o MESMO em toda página, não só na capa** (2026-09-22, pedido
+  do usuário: a posição da capa como referência pra todas as páginas).
+  `FolhetoMobilidade.FRACAO_Y_MIN_LETTERMARK = 0.27` (mesma fração de
+  `faixa_h` na capa) é passada por `_topo_pagina` E por
+  `_pag_encerramento_decorativo`, não só por `draw_capa_padrao` — antes,
+  só a capa usava esse `y_min`; páginas de conteúdo centralizavam contra
+  a altura inteira (`y_min=0`, o padrão), deixando a palavra no meio
+  vertical da página em vez de na mesma posição da capa. Consistência de
+  posição em toda página agora é intencional, não um efeito colateral de
+  cada chamador decidir por conta própria.
 
 ### 5.17 Painel decorativo (`draw_mosaico_decorativo` — NOVO, página de encerramento)
 Painel quadrado pra página de encerramento (§6, página 6). Pedido

@@ -692,6 +692,19 @@ produção, uma sequência de correções e um problema em aberto:
    a altura da página inteira, e horizontalmente contra a área de
    conteúdo (descontando o stripe conforme `lado`), não a página bruta.
 
+**Nono adendo (2026-09-22, mesmo dia):** o usuário mandou a capa como
+screenshot com a posição do lettermark circulada em vermelho e pediu que
+TODA página usasse essa mesma posição (não só a capa) — "próximo ao
+número da página". Antes disso, só `draw_capa_padrao` passava
+`y_min=faixa_h` pra `draw_lettermark_stripe`; `_topo_pagina` (todas as
+páginas de conteúdo) e `_pag_encerramento_decorativo` (página 6) usavam
+o padrão `y_min=0`, centralizando a palavra na altura INTEIRA da
+página — bem mais alto do que na capa, inconsistente entre páginas.
+Nova constante `FolhetoMobilidade.FRACAO_Y_MIN_LETTERMARK = 0.27` (mesma
+fração de `faixa_h` na capa) agora é passada nas 3 chamadas, garantindo
+a mesma posição vertical do lettermark em toda página do folheto. Ver
+`DESIGN_SYSTEM.md` §5.16.
+
 ---
 
 ## Diretrizes de Engenharia
