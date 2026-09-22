@@ -391,14 +391,41 @@ vetorial girado em tempo de execução, sem asset raster nenhum).
   é constante do tema, não do núcleo; um tema novo passaria a própria
   palavra ou omitiria o parâmetro.
 
+### 5.17 Painel decorativo (`draw_mosaico_decorativo` — NOVO, página de encerramento)
+Grade quadrada de formas do vocabulário modular (quadrado cheio, quarto de
+círculo, meio-círculo) como **contorno colorido puro** — sem máscara de
+foto nenhuma, ao contrário de `draw_mosaico_fotografico` (§5.15). Pedido
+explícito do usuário, com uma imagem de referência (painel do
+folheto-ifem: mosaico modular + logo FNP + URL, sem dado nenhum).
+
+- Reaproveita o mesmo par de dicionários de forma por célula
+  (`cantos_quarto`/`arestas_meio`) que `draw_mosaico_fotografico` já usava
+  — extraído para uma função compartilhada, `_vocabulario_celula(cell)`,
+  em vez de duplicar as duas versões (uma pra cada função). Cor cíclica
+  entre as células a partir de `_PALETA_MODULAR` (mesma paleta do
+  alfabeto modular e do rodapé decorativo, §5.13/5.14) — lê como o mesmo
+  sistema visual, não uma paleta nova.
+- Sempre uma grade quadrada (`w`×`w`) — `w` também é o retorno da função,
+  útil pra empilhar o logo/URL logo abaixo sem recalcular a altura.
+- `seed` fixo (padrão 7) garante que o painel sai igual em toda geração
+  (mesma filosofia do mosaico fotográfico) — não é decoração "toda vez
+  diferente".
+- Usado só na página de encerramento (§6, página 6) — `_pag_encerramento_
+  decorativo` em `mobilidade.py`, sem header/footer/eyebrow (a página de
+  referência não tem nenhum texto de seção), só stripe, número de página
+  e lettermark, mesmo padrão do resto do folheto.
+
 ---
 
 ## 6. Estrutura canônica do folheto (tema `mobilidade`)
 
-**Teto rígido: no máximo 5 páginas** (decisão do usuário, registrada em
-`CLAUDE.md`). Isso significa nenhuma página de divisória — o cabeçalho de
-seção vive dentro da própria página de conteúdo, e os pares tabela+gráfico
-que antes eram páginas separadas foram fundidos.
+**Teto de 5 páginas revisto (2026-09-21, a pedido do usuário: "não temos
+limite de páginas mais").** A regra original (registrada em `CLAUDE.md`,
+Decisão 5) segue valendo pro CONTEÚDO de dado (nenhuma página de
+divisória, cabeçalho de seção dentro da própria página, pares
+tabela+gráfico fundidos) — só deixou de ser um teto rígido de contagem.
+A 6ª página (encerramento decorativo) foi uma ADIÇÃO pura, não reabre a
+fusão das páginas 2–5.
 
 | Pág. | Função                                        | Stripe | Status |
 |------|------------------------------------------------|--------|--------|
@@ -407,6 +434,7 @@ que antes eram páginas separadas foram fundidos.
 | 03   | Série histórica de mortes + donut por modo + ranking de causas de morte | dir | ✅ implementada (aceita `null`) |
 | 04   | Tabela de internações + série histórica de internações (gestão hachurada) | esq | ✅ implementada (aceita `null`) |
 | 05   | Metodologia (passos numerados) + "leitos de UTI" + QR compacto | dir | ✅ implementada |
+| 06   | Encerramento decorativo (painel modular + logo + URL, sem dado) | alterna | ✅ implementada (§5.17) |
 | —    | Custo por hospital, por modo                   | —      | ❌ pendente de dado (ver CLAUDE.md) |
 | —    | Mapa de internações por bairro (RM)            | —      | ❌ pendente de dado + componente novo |
 

@@ -27,13 +27,13 @@ from core.components import (
     draw_kpi_box, draw_destaque_box, draw_table, draw_ranking_item,
     draw_qr_bloco, draw_capa_padrao, draw_line_chart,
     draw_percentual_bar, draw_donut_chart, draw_decoracao_rodape,
-    draw_lettermark_stripe,
+    draw_lettermark_stripe, draw_mosaico_decorativo,
 )
 from core.paleta_ranking import cor_por_percentil
 from core.tokens import (
     MARGIN, STRIPE_W, CONTENT_W, ASSETS_DIR,
-    BLUE, BLUE_DARK, RED_BURNT, GREEN, WHITE,
-    FONT_NUM_BOLD,
+    BLUE, BLUE_DARK, RED_BURNT, GREEN, WHITE, MUTED,
+    FONT_NUM_BOLD, FONT_TEXTO,
     FS_TITLE_SECAO,
 )
 from core.fonts import F
@@ -82,6 +82,7 @@ class FolhetoMobilidade(FolhetoFNP):
             self._pag_serie_mortes_causas,
             self._pag_internacoes,
             self._pag_metodologia_encerramento,
+            self._pag_encerramento_decorativo,
         ]
 
     # ─── Helpers de conteúdo/ausência de dado ────────────────────────────────
@@ -467,3 +468,43 @@ class FolhetoMobilidade(FolhetoFNP):
         # QR) — nunca sobrepor o card de QR, que também pode terminar mais
         # baixo que o texto dependendo do tamanho da nota dos leitos de UTI.
         draw_decoracao_rodape(c, "dir", min(y, y_qr), forcar_fina=True)
+
+    # ─── Página 6: Encerramento decorativo ────────────────────────────────────
+
+    def _pag_encerramento_decorativo(self, c, n):
+        """Página só decorativa (painel modular + logo + URL), sem
+        conteúdo de dado — pedido explícito do usuário em 2026-09-21, com
+        uma imagem de referência (painel do folheto-ifem: mosaico de
+        formas do sistema modular, sem foto, + logo FNP + URL abaixo).
+        Acrescentada como página nova (6ª); o teto de 5 páginas da Decisão
+        5 foi revisto pelo usuário no mesmo pedido ("não temos limite de
+        páginas mais") — não remover conteúdo de nenhuma página existente
+        por causa desta, é adição pura. Sem header/footer/eyebrow (a
+        referência não tem nenhum texto de seção) — só stripe, número de
+        página e o lettermark, mesmo padrão do resto do folheto."""
+        lado = "dir" if n % 2 else "esq"
+        c.setFillColor(WHITE)
+        c.rect(0, 0, self.W, self.H, fill=1, stroke=0)
+        draw_stripe(c, self.W, self.H, lado)
+        draw_page_number(c, self.W, n, lado)
+        draw_lettermark_stripe(c, self.PALAVRA_STRIPE, self.W, self.H, lado)
+
+        painel_w = CONTENT_W * 0.82
+        painel_x = (self.W - painel_w) / 2
+        painel_y = self.H * 0.42
+        draw_mosaico_decorativo(c, painel_x, painel_y, painel_w, cols=8, seed=7)
+
+        logo = ASSETS_DIR / "logos" / "fnp-logo.png"
+        logo_cy = painel_y - 46
+        if logo.exists():
+            logo_h = 30.0
+            logo_w = logo_h * 2.6
+            c.drawImage(str(logo), self.W / 2 - logo_w / 2, logo_cy - logo_h / 2,
+                        width=logo_w, height=logo_h,
+                        preserveAspectRatio=True, mask="auto")
+            logo_cy -= logo_h + 14
+
+        url = self.d.get("url", self.URL_PADRAO)
+        c.setFillColor(MUTED)
+        c.setFont(F(FONT_TEXTO), 9.5)
+        c.drawCentredString(self.W / 2, logo_cy - 6, url)

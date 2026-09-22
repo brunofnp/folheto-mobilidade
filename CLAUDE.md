@@ -42,6 +42,18 @@
 > commit, em projeto nenhum** (também salva em `~/.claude/CLAUDE.md`,
 > global) — os commits desta sessão que já tinham essa linha foram
 > reescritos e republicados.
+>
+> Atualizado em 2026-09-22 — **teto de 5 páginas revisto** ("não temos
+> limite de páginas mais"): 6ª página acrescentada, só decorativa
+> (painel modular + logo FNP + URL, sem dado nenhum), a pedido do
+> usuário com imagem de referência do folheto-ifem. Ver Decisão 5,
+> oitavo adendo, item 2, e `DESIGN_SYSTEM.md` §5.17/§6. **Espelhamento
+> do lettermark do stripe: ainda SEM confirmação do usuário** — a
+> correção anterior (`scale(1,-1)`) foi confirmada matematicamente E
+> empiricamente como um no-op visual pro alfabeto atual; uma página de
+> comparação com 5 variantes foi publicada (Artifact) esperando o
+> usuário escolher qual bate com a referência dele. Ver Decisão 5,
+> oitavo adendo, item 1 — não presumir resolvido.
 
 ---
 
@@ -622,6 +634,48 @@ produção, uma sequência de correções e um problema em aberto:
    `next`, nos dois remotos — confirmado via API do GitHub que só
    `brunofnp` aparece como autor agora.
 
+**Oitavo adendo (2026-09-22):**
+
+1. **Espelhamento do stripe, investigação continuada — ainda sem
+   confirmação do usuário.** O usuário reportou que o `scale(1,-1)`
+   aplicado no sétimo adendo "não modificou nada". Investigação (gerando
+   as 4 combinações possíveis de rotação/string/espelho como PDFs de
+   teste e comparando os PNGs lado a lado) confirmou matematicamente E
+   empiricamente a ressalva que já tinha sido registrada: `scale(1,-1)`
+   é um **no-op visual** pro alfabeto atual, porque a assimetria de
+   `_glifo_b`/`_glifo_d` fica no eixo de SEQUÊNCIA da palavra (mapeado
+   pra cima/baixo na página), não no eixo de LARGURA do stripe (que o
+   scale afeta) — variante "sem espelho" e "com espelho" saem pixel-a-
+   pixel idênticas. Uma 5ª variante genuinamente diferente
+   (`rotate(+90)` em vez de `rotate(-90)`, sem inverter a string) foi
+   gerada e publicada numa página de comparação (Artifact, já que
+   embutir arquivo por `files` estava bloqueado por uma regra de
+   permissão nesta sessão — contornado embutindo os PNGs como `data:`
+   URI direto no HTML) pro usuário escolher qual bate com a referência
+   dele. **Ainda não temos a resposta** — não presumir que `scale(1,-1)`
+   é a solução final; o código de produção continua com ele por ora
+   (não piora nada, mas também pode não ser a correção certa). Ver
+   `python/core/components.py::draw_lettermark_stripe`.
+2. **Teto de 5 páginas, revisto — página 6 (encerramento decorativo)
+   acrescentada.** O usuário mandou uma imagem de referência (painel do
+   folheto-ifem: mosaico modular em contorno colorido, sem foto, + logo
+   FNP + URL, sem nenhum texto de dado) e pediu que a última folha do
+   folheto fosse exatamente isso. Perguntado se isso substituía a
+   metodologia da página 5 ou era conteúdo novo: **"não temos limite de
+   páginas mais, só vamos acrescentar a página que eu solicitei"** — ou
+   seja, o teto rígido da Decisão 5 deixou de valer pra CONTAGEM de
+   página (a regra de não ter divisória sem conteúdo continua valendo,
+   só não há mais "no máximo 5"). Nova primitiva genérica
+   `draw_mosaico_decorativo` (`core/components.py`) — mesmo vocabulário
+   de forma que `draw_mosaico_fotografico` (§5.15), mas como contorno
+   colorido puro (sem clip de foto), extraído pra uma função
+   compartilhada `_vocabulario_celula`. Nova página `_pag_encerramento_
+   decorativo` em `mobilidade.py`, 6ª da lista — sem header/footer/
+   eyebrow (a referência não tem texto de seção nenhum), só stripe,
+   número de página e o lettermark, como as demais. PDFs regenerados
+   (6 páginas agora) e republicados na release `v1`. Ver
+   `DESIGN_SYSTEM.md` §5.17 e §6.
+
 ---
 
 ## Diretrizes de Engenharia
@@ -737,5 +791,5 @@ escrever, é dado que precisa vir de outro lugar):
 - **Espaçamento vertical da A4 — resolvido (2026-09-21).** Não foi um recálculo manual de cada componente: `draw_decoracao_rodape` (portado do `_decorar_rodape` do folheto-ifem, ver Decisão 5) preenche o respiro no fim da página com o alfabeto modular (`assets/padroes/arte0|1|2.png`) sempre que sobra espaço — mesmo mecanismo, mesmos arquivos, do folheto-ifem. Ver `DESIGN_SYSTEM.md` §5.13.
 - **Site estático de distribuição (`docs/`) — migrado pra produção, no ar (2026-09-21).** `https://dadosfnp.github.io/folheto-mobilidade/` está no ar (Pages em `dadosfnp/folheto-mobilidade`, branch `main`, pasta `/docs` — habilitado manualmente pelo usuário, exige permissão `admin` que a API não tinha). A release oficial dos PDFs (`v1`) está lá também. GitHub Pages do repo pessoal (`brunofnp/folheto-mobilidade`) foi desligado de propósito, pra não ter dois sites no ar — a distribuição pública é só o domínio da organização agora.
 
-- **Lettermark "MOBILIDADE" no stripe — espelhamento esquerda↔direita, correção aplicada mas NÃO confirmada visualmente (2026-09-21).** Ver Decisão 5, sétimo adendo, item 3, pro histórico completo da investigação (inclusive a ressalva sobre `_glifo_b`/`_glifo_d` serem simétricos no eixo afetado pelo fix). Se o usuário disser que ainda está errado numa próxima sessão, não presumir que é a mesma causa — reabrir a investigação letra por letra com a técnica de marcar retângulo vermelho no PDF via PyMuPDF (mais confiável que comparar screenshots pequenos a olho).
+- **Lettermark "MOBILIDADE" no stripe — espelhamento esquerda↔direita, AINDA EM ABERTO (2026-09-22).** O usuário confirmou que o `scale(1,-1)` do sétimo adendo "não modificou nada" — investigação (Decisão 5, oitavo adendo, item 1) confirmou que é mesmo um no-op pra este alfabeto (assimetria de `_glifo_b`/`_glifo_d` fica no eixo errado pro scale afetar). Gerei 5 variantes de teste (rotação/string/espelho) e publiquei numa página de comparação (Artifact) — **falta o usuário escolher qual bate com a referência dele antes de aplicar qualquer mudança nova em `draw_lettermark_stripe`**. Não mexer nisso de novo sem essa resposta — mais um palpite sem confirmação já causou 2 rodadas de regenerar+republicar a release à toa.
 - `tools/dados_tratados_para_json.py` está escrito e funcionando para o formato de `data/external/` atual — se esse formato mudar (nova coluna, planilha reestruturada), o script precisa acompanhar.

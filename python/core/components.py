@@ -1205,6 +1205,69 @@ _RECEITA_GLIFO_MOSAICO = {
 _LARGURA_GLIFO_MOSAICO = {"M": 2, "O": 2, "B": 2, "I": 1}
 
 
+def _vocabulario_celula(cell: float):
+    """Vocabulário de formas de uma célula de lado `cell`, compartilhado
+    por `draw_mosaico_fotografico` (máscara de foto) e `draw_mosaico_
+    decorativo` (contorno colorido puro, sem foto) — canto de quarto de
+    círculo (vértice num dos 4 cantos) e meio-círculo por aresta (base numa
+    das 4 arestas), ambos bulindo pro interior da célula."""
+    cantos_quarto = {
+        "bl": (0, 0, 0, 90), "br": (cell, 0, 90, 90),
+        "tr": (cell, cell, 180, 90), "tl": (0, cell, 270, 90),
+    }
+    arestas_meio = {
+        "esq": (0, cell / 2, 270, 180), "dir": (cell, cell / 2, 90, 180),
+        "baixo": (cell / 2, 0, 0, 180), "cima": (cell / 2, cell, 180, 180),
+    }
+    return cantos_quarto, arestas_meio
+
+
+def draw_mosaico_decorativo(c, x: float, y: float, w: float, *,
+                            cols: int = 8, seed: int = 7,
+                            cores=None, traco: float = 1.3) -> float:
+    """Grade quadrada (`w`×`w`) de formas do vocabulário modular (quadrado
+    cheio, quarto de círculo, meio-círculo — mesmo de `draw_mosaico_
+    fotografico`), só que como CONTORNO colorido, sem máscara de foto
+    nenhuma — painel decorativo puro, canto inferior-esquerdo em `(x, y)`.
+    Usado na página de encerramento (§6): mesmo padrão visual do rodapé
+    modular (`draw_decoracao_rodape`) e do mosaico da capa, só que como
+    elemento central de página, não textura de fundo. Cor cíclica entre as
+    células (não por célula sozinha) pra ler como um painel só, não um
+    grid aleatório de cores repetidas. Retorna `w` (a grade é sempre
+    quadrada, útil pra empilhar conteúdo abaixo dela sem recalcular)."""
+    import random
+
+    cores = cores or _PALETA_MODULAR
+    cell = w / cols
+    rng = random.Random(seed)
+    cantos_quarto, arestas_meio = _vocabulario_celula(cell)
+    formas = (
+        [("quadrado", None)] * 3
+        + [("cunha", v) for v in cantos_quarto.values()] * 2
+        + [("cunha_meia", v) for v in arestas_meio.values()] * 2
+    )
+
+    c.saveState()
+    for lin in range(cols):
+        for col in range(cols):
+            cx0, cy0 = x + col * cell, y + lin * cell
+            tipo, dados = rng.choice(formas)
+            c.setStrokeColor(rng.choice(cores))
+            c.setLineWidth(traco)
+            if tipo == "quadrado":
+                c.rect(cx0, cy0, cell, cell, fill=0, stroke=1)
+            elif tipo == "cunha":
+                dx, dy, ang, ext = dados
+                p = _caminho_cunha(c, cx0 + dx, cy0 + dy, cell, ang, ext)
+                c.drawPath(p, fill=0, stroke=1)
+            else:
+                dx, dy, ang, ext = dados
+                p = _caminho_cunha(c, cx0 + dx, cy0 + dy, cell / 2, ang, ext)
+                c.drawPath(p, fill=0, stroke=1)
+    c.restoreState()
+    return w
+
+
 def draw_mosaico_fotografico(c, foto_path, page_w: float, y0: float, y1: float,
                              seed: int = 13, cols: int = 8,
                              palavra_mosaico: str | None = None,
@@ -1254,19 +1317,7 @@ def draw_mosaico_fotografico(c, foto_path, page_w: float, y0: float, y1: float,
     zona.rect(0, y0, page_w, zona_h)
     c.clipPath(zona, stroke=0, fill=0)
 
-    # Vértice em cada canto da célula, arco de 90° bulindo pro interior —
-    # mesma técnica de `_glifo_m`/`_glifo_o` (§5.14), agora usada como
-    # máscara em vez de contorno.
-    cantos_quarto = {
-        "bl": (0, 0, 0, 90), "br": (cell, 0, 90, 90),
-        "tr": (cell, cell, 180, 90), "tl": (0, cell, 270, 90),
-    }
-    # Base numa aresta, meio-círculo bulindo pro interior — mesma técnica
-    # do glifo 'B'.
-    arestas_meio = {
-        "esq": (0, cell / 2, 270, 180), "dir": (cell, cell / 2, 90, 180),
-        "baixo": (cell / 2, 0, 0, 180), "cima": (cell / 2, cell, 180, 180),
-    }
+    cantos_quarto, arestas_meio = _vocabulario_celula(cell)
 
     # Sobreposição determinística das células que a palavra ocupa —
     # calculada ANTES do laço principal, pra cada célula só decidir uma vez
