@@ -7,11 +7,13 @@ dados só mudam via `tools/dados_tratados_para_json.py` (a partir de
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 
 from django.conf import settings
 
 DIR_DADOS = Path(settings.BASE_DIR) / "data" / "mobilidade"
+ARQUIVO_INDICE_SITE = Path(settings.BASE_DIR) / "docs" / "folhetos.json"
 
 
 class MunicipioNaoEncontrado(Exception):
@@ -64,3 +66,23 @@ def listar_municipios() -> list[dict]:
             item.update(nome=slug, uf="", populacao=None, erro=str(e))
         linhas.append(item)
     return linhas
+
+
+def rodape_atualizado_texto() -> str:
+    """Mesmo texto do rodapé do site público (`docs/index.html`, ver o
+    JS em torno de `#rodape-dados`): lê `docs/folhetos.json` (gerado por
+    `tools/build_site.py`) e formata a data de "atualizado" como
+    DD/MM/AAAA; pedido explícito do usuário, o rodapé do back-office
+    local mostrava um texto diferente ("Ferramenta interna · uso local")
+    do site público ("Índice atualizado em..."), e os dois devem ser
+    exatamente iguais. Fallback idêntico ao do site público se o índice
+    ainda não existir ou não tiver o campo."""
+    try:
+        indice = json.loads(ARQUIVO_INDICE_SITE.read_text(encoding="utf-8"))
+        atualizado = indice.get("atualizado")
+    except (OSError, json.JSONDecodeError):
+        atualizado = None
+    if not atualizado:
+        return "Folhetos atualizados periodicamente."
+    dt = datetime.strptime(atualizado, "%Y-%m-%dT%H:%M:%SZ")
+    return f"Índice atualizado em {dt.strftime('%d/%m/%Y')}."

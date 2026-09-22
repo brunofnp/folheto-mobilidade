@@ -18,7 +18,11 @@ def lista(request):
         # esse dot só diz se já foi gerado alguma vez.
         pdf = geracao.caminho_pdf({"nome": m["nome"], "uf": m["uf"]})
         m["pdf_existe"] = pdf.exists()
-    return render(request, "municipios/lista.html", {"municipios": municipios})
+    contexto = {
+        "municipios": municipios,
+        "rodape_atualizado": armazenamento.rodape_atualizado_texto(),
+    }
+    return render(request, "municipios/lista.html", contexto)
 
 
 def _gerar_e_servir(request, slug: str, *, inline: bool):
@@ -40,8 +44,11 @@ def _gerar_e_servir(request, slug: str, *, inline: bool):
     try:
         pdf, avisos = geracao.gerar_pdf(caminho, tamanho=tamanho)
     except Exception as e:
-        return render(request, "municipios/erro_geracao.html",
-                       {"slug": slug, "erro": str(e)}, status=500)
+        contexto = {
+            "slug": slug, "erro": str(e),
+            "rodape_atualizado": armazenamento.rodape_atualizado_texto(),
+        }
+        return render(request, "municipios/erro_geracao.html", contexto, status=500)
     return FileResponse(open(pdf, "rb"), as_attachment=not inline,
                          filename=pdf.name, content_type="application/pdf")
 
