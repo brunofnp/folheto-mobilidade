@@ -68,6 +68,29 @@
 > mesmo dia, a pedido do usuário**: perfil da cidade/frota é a página 5
 > agora (stripe `dir`), metodologia virou a 6ª (stripe `esq`); a
 > decorativa continua sendo a última, 7ª.
+>
+> Atualizado em 2026-09-22 (mesmo dia, fim do dia): os dois donuts do
+> folheto ("distribuição por modo" e "composição da frota atual") foram
+> aumentados (raio 44 para 60) e padronizados entre si, com a legenda
+> maior e centralizada verticalmente no gráfico (não mais alinhada ao
+> topo); ver `draw_donut_chart` em `core/components.py`. Rodapé do
+> back-office local corrigido pra ficar idêntico ao do site público
+> (lia "Ferramenta interna · uso local", agora lê `docs/folhetos.json`
+> no servidor e mostra "Índice atualizado em DD/MM/AAAA", igual ao JS do
+> site). Duas notas que falavam a linguagem interna do projeto ("item 8
+> do briefing", "cálculo pendente") foram retiradas da cartilha: o
+> parágrafo explicativo dos leitos de UTI (metodologia) e "Faixa
+> destacada: gestão do prefeito atual" (internações); a citação de
+> fonte obrigatória continua nas duas páginas. Tudo publicado em
+> `origin`/`production`, `main` e `next`, e conferido direto no PDF
+> ao vivo em `https://dadosfnp.github.io/folheto-mobilidade/`. A folha
+> de referência do alfabeto modular (`assets/padroes/
+> alfabeto_modular_referencia.png`) foi gerada por script, revisada
+> várias vezes, e no fim **substituída pela versão do próprio usuário**
+> (redesenho vetorial dele, mais limpo); essa é a referência canônica
+> agora, ver Decisão 5, décimo quarto adendo. **Nova regra registrada em
+> memória**: sempre que o usuário disser "por hoje é só", atualizar este
+> arquivo com o contexto da sessão antes de confirmar o encerramento.
 
 ---
 
@@ -815,6 +838,22 @@ traço de cada lado", comparando com a referência (que mostra as pétalas
 emolduradas por um retângulo completo). Adicionada uma linha reta na
 borda externa de cada pétala (de `base_y` até o topo). PDFs regenerados
 e republicados de novo na release v1.
+
+**Décimo quarto adendo (2026-09-22, mesmo dia): folha de referência do
+alfabeto completo A-Z.** A pedido do usuário ("gera um arquivo com o
+alfabeto completo pra eu visualizar"), gerei `assets/padroes/
+alfabeto_modular_referencia.png`: grade A-Z, as letras que o mobilidade
+já tem em vetor (A, B, D, E, I, L, M, O) usando `components.py`, as
+demais recortadas do specimen real do folheto-ifem. Passou por várias
+rodadas de correção (recorte vazando letra vizinha, depois traço grosso
+demais, depois cor voltando pra paleta de 4 tons pedida pelo usuário).
+**Substituído no mesmo dia pela versão do próprio usuário** ("fiz uma
+versão muito mais limpa e sem borrar, admita esse novo como o padrão"),
+um redesenho vetorial dele mesmo, mesma paleta azul/dourado, letras A-Z.
+Esse arquivo (não a versão gerada por script) é a referência canônica
+pra qualquer consulta futura sobre o desenho de uma letra do alfabeto
+modular; o script de geração não foi apagado do histórico, mas não roda
+mais pra este arquivo.
 
 ---
 
